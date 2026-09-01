@@ -48,7 +48,7 @@
       messages: [
         {
           sender: 'partner',
-          text: `안녕하세요 ${currentUser?.name || '회원'}님! 리조넌스 케어 전담 파트너 김서연입니다. 오늘 몸과 마음의 상태를 편안하게 기록해 주시면 세심하게 살피겠습니다.`,
+          text: `안녕하세요 ${currentUser?.name || '회원'}님! 리조넌스 케어 전담 김복선 치유사입니다. 오늘 몸과 마음의 상태를 편안하게 기록해 주시면 세심하게 살피겠습니다.`,
           time: '가입 환영'
         }
       ],
@@ -145,7 +145,7 @@
       inviteCode: code,
       joinedAt: new Date().toISOString().slice(0, 10),
       grade: 'VIP',
-      assignedPartner: '김서연 파트너'
+      assignedPartner: '김복선 치유사'
     };
 
     saveAuth(newUser);
@@ -166,7 +166,7 @@
       name,
       phone,
       grade: 'VIP',
-      assignedPartner: '김서연 파트너'
+      assignedPartner: '김복선 치유사'
     };
 
     saveAuth(user);
@@ -327,7 +327,7 @@
     const gName = document.getElementById('mbGreetingName');
     const gPartner = document.getElementById('mbGreetingPartner');
     if (gName) gName.textContent = `${currentUser.name} 님`;
-    if (gPartner) gPartner.textContent = `전담 케어 파트너: ${currentUser.assignedPartner || '김서연 파트너'} 배정됨`;
+    if (gPartner) gPartner.textContent = `전담 케어: ${currentUser.assignedPartner || '김복선 치유사'} 배정됨`;
 
     // Today Status Tag
     const tag = document.getElementById('lblTodayStatusTag');

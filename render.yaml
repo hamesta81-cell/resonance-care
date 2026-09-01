@@ -3,8 +3,5 @@ services:
     name: resonance-care-platform
     env: node
     plan: free
-    buildCommand: ""
+    buildCommand: "npm run build"
     startCommand: "node server.js"
-    envVars:
-      - key: NODE_VERSION
-        value: 18.17.0

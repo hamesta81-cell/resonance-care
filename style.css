@@ -314,8 +314,9 @@ body {
 
 /* Tabs */
 .member-tab-nav {
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 12px;
 }
@@ -324,15 +325,17 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
-  padding: 10px 20px;
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
   transition: var(--transition-fast);
+  white-space: nowrap;
 }
 
 .m-tab-btn:hover {
@@ -344,6 +347,7 @@ body {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
 }
 
 .m-tab-content {
@@ -707,3 +711,130 @@ body {
 .mt-2 { margin-top: 10px; }
 .mt-3 { margin-top: 16px; }
 .text-success { color: #34D399; }
+
+/* ========================================================
+   MOBILE RESPONSIVE MEDIA QUERIES (< 768px)
+   ======================================================== */
+@media (max-width: 768px) {
+  .global-header {
+    padding: 0 16px;
+    height: 60px;
+  }
+
+  .brand-title {
+    font-size: 15px;
+  }
+
+  .brand-tag {
+    display: none;
+  }
+
+  .app-main-container {
+    padding: 16px 12px;
+  }
+
+  .public-hero {
+    padding: 30px 10px 20px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+    line-height: 1.35;
+  }
+
+  .hero-desc {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .public-features {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 30px 0 50px;
+  }
+
+  .member-dashboard-header {
+    padding: 18px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .membership-status-pill {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* 정갈한 모바일 2x2 탭 그리드 메뉴 */
+  .member-tab-nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+
+  .m-tab-btn {
+    padding: 12px 10px;
+    font-size: 13px;
+    border-radius: var(--radius-sm);
+    justify-content: center;
+  }
+
+  .today-action-hero {
+    padding: 22px 18px;
+  }
+
+  .today-action-hero h3 {
+    font-size: 18px;
+  }
+
+  .today-action-hero p {
+    font-size: 13px;
+  }
+
+  .kv-grid-3 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .kv-col {
+    background: var(--bg-card);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+  }
+
+  .partner-check-banner {
+    padding: 12px 14px;
+  }
+
+  .scale-btn-group {
+    gap: 4px;
+  }
+
+  .scale-btn {
+    padding: 8px 2px;
+    font-size: 12px;
+  }
+
+  .scale-btn small {
+    font-size: 8px;
+  }
+
+  .chat-wrapper {
+    height: 420px;
+    padding: 14px;
+  }
+
+  .chat-bubble {
+    max-width: 85%;
+  }
+}

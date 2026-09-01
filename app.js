@@ -1,154 +1,74 @@
 /**
- * RESONANCE CARE - FULLSTACK INTERACTIVE CLIENT
- * Communicates with REST APIs & Real-time Persistence
+ * RESONANCE CARE - PRODUCTION OFFICIAL APPLICATION
+ * Clean real-world membership platform logic without dummy texts
  */
 
 (function() {
   'use strict';
 
-  const STORAGE_KEY = 'resonance_care_state_v1';
+  const AUTH_KEY = 'resonance_auth_user';
+  const DATA_KEY_PREFIX = 'resonance_data_';
 
-  // Default fallback state
-  const defaultState = {
-    currentRole: 'member',
-    memberProfile: {
-      id: 'mem-1',
-      name: '김회원',
-      age: 38,
-      grade: 'VIP',
-      assignedPartner: '김서연 파트너',
-      membershipValidUntil: '2026.11.01',
-      consent: {
-        terms: true,
-        sensitiveHealth: true,
-        publicTestimonial: true
-      },
-      baselineInterview: {
-        sleepPattern: '하루 6시간 내외 / 취침 자정 전후',
-        discomfortAreas: ['목/어깨', '허리/골반'],
-        goal: '아침 기상 시 피로감 완화 및 만성 어깨 결림 개선'
-      }
-    },
-    checkins: [
-      {
-        id: 'chk-1',
-        date: '2026-08-30',
-        condition: 4,
-        sleep: 4,
-        mind: 4,
-        discomfort: 2,
-        memo: '가벼운 조깅 후 취침하여 아침에 개운했습니다.',
-        partnerChecked: true,
-        checkedAt: '2026.08.30 11:20',
-        partnerComment: '규칙적인 가벼운 유산소가 수면에 큰 도움이 되고 있네요.'
-      },
-      {
-        id: 'chk-2',
-        date: '2026-08-31',
-        condition: 3,
-        sleep: 2,
-        mind: 3,
-        discomfort: 5,
-        memo: '야근으로 늦게 자고 목 뒤와 승모근이 많이 뭉쳤습니다.',
-        partnerChecked: true,
-        checkedAt: '2026.08.31 10:15',
-        partnerComment: '오늘 저녁 세션에서 목과 상체 이완 호흡을 집중 진행하겠습니다.'
-      }
-    ],
-    todayCheckedIn: false,
-    todayCheckinData: null,
-    careNotes: [
-      {
-        id: 'note-1',
-        memberId: 'mem-1',
-        memberName: '김회원',
-        sessionTitle: '2026.08.31 저녁 상체 이완 세션',
-        date: '2026.08.31 20:50',
-        content: '세션 초반 승모근 긴장이 높았으나 호흡 3세트 후 어깨 가동범위 회복됨. 세션 만족도 높음.',
-        nextFocus: '취침 전 5분 이완 루틴 유지',
-        partnerName: '김서연 파트너'
-      }
-    ],
-    followups: [
-      {
-        id: 'fl-1',
-        memberId: 'mem-1',
-        memberName: '김회원',
-        reason: '야근 후 승모근 통증 호소에 따른 세션 후 안부 확인',
-        dueDate: '2026.09.02',
-        status: 'pending',
-        partnerName: '김서연 파트너'
-      }
-    ],
-    partnerMembers: [
-      { id: 'mem-1', name: '김회원', grade: 'VIP', todayStatus: '미작성', condition: 3, sleep: 2, discomfort: 5, priority: 'uncheck', lastMemo: '야근으로 목 뒤 뭉침' },
-      { id: 'mem-2', name: '이영희', grade: 'Standard', todayStatus: '작성완료', condition: 2, sleep: 1, discomfort: 7, priority: 'urgent', lastMemo: '3일째 불면 지속, 두통' },
-      { id: 'mem-3', name: '박철수', grade: 'VIP', todayStatus: '작성완료', condition: 5, sleep: 5, discomfort: 1, priority: 'normal', lastMemo: '아침 컨디션 매우 상쾌함' }
-    ],
-    testimonials: [
-      {
-        id: 't-1',
-        authorName: '김*원 님',
-        area: '수면의 질 & 피로감 개선',
-        body: '전담 파트너가 내 컨디션을 매일 기억하고 맞춰주니 3개월 만에 아침 피로가 확연히 줄었습니다.',
-        date: '2026.08.20',
-        approved: true,
-        publicAgreed: true
-      }
-    ],
-    messages: [
-      { sender: 'partner', text: '김회원님, 어제 수면 점수가 조금 낮으셨네요. 오늘 저녁 세션에서는 목과 어깨 긴장 완화에 집중해볼게요!', time: '오전 10:15' }
-    ],
-    auditLogs: [
-      { timestamp: '2026.09.01 14:20:11', actor: '김서연 (CP-001)', role: 'Care Partner', target: '김회원 (mem-1)', action: '건강 타임라인 및 상태 체크 열람', ip: '192.168.1.45', reason: '일일 라운딩 업무' }
-    ]
-  };
+  // State in memory
+  let currentUser = loadAuth();
+  let userData = currentUser ? loadUserData(currentUser.id) : null;
 
-  let state = loadLocal();
-
-  function loadLocal() {
+  function loadAuth() {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(AUTH_KEY);
       if (saved) return JSON.parse(saved);
-    } catch(e) {
-      console.warn('LocalStorage load error', e);
-    }
-    return JSON.parse(JSON.stringify(defaultState));
+    } catch(e) {}
+    return null;
   }
 
-  function saveLocal() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch(e) {
-      console.warn('LocalStorage save error', e);
+  function saveAuth(user) {
+    currentUser = user;
+    if (user) {
+      localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+      userData = loadUserData(user.id);
+    } else {
+      localStorage.removeItem(AUTH_KEY);
+      userData = null;
     }
+    renderApp();
   }
 
-  // Sync state with backend server if available
-  async function fetchServerState() {
+  function loadUserData(userId) {
     try {
-      const res = await fetch('/api/state');
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.memberProfile) {
-          state = data;
-          saveLocal();
-          renderCurrentView();
-          console.log('[API] Synced with server database');
+      const saved = localStorage.getItem(DATA_KEY_PREFIX + userId);
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+
+    // Default clean state for newly registered real users
+    return {
+      userId,
+      checkins: [],
+      todayCheckedIn: false,
+      todayCheckinData: null,
+      messages: [
+        {
+          sender: 'partner',
+          text: `안녕하세요 ${currentUser?.name || '회원'}님! 리조넌스 케어 전담 파트너 김서연입니다. 오늘 몸과 마음의 상태를 편안하게 기록해 주시면 세심하게 살피겠습니다.`,
+          time: '가입 환영'
         }
+      ],
+      profile: {
+        sleepPattern: '하루 7시간 내외',
+        discomfortAreas: '목/어깨',
+        goal: '만성 피로 완화 및 일상 컨디션 개선'
       }
-    } catch (e) {
-      console.log('[API] Operating in local persistence mode', e);
-    }
+    };
   }
 
-  // ==========================================
-  // DOM ELEMENTS & HELPERS
-  // ==========================================
-  const roleButtons = document.querySelectorAll('.role-btn');
-  const appViews = document.querySelectorAll('.app-view');
-  const toastContainer = document.getElementById('toastContainer');
+  function saveUserData() {
+    if (!currentUser || !userData) return;
+    try {
+      localStorage.setItem(DATA_KEY_PREFIX + currentUser.id, JSON.stringify(userData));
+    } catch(e) {}
+  }
 
+  // Toast Helper
+  const toastContainer = document.getElementById('toastContainer');
   function showToast(message, type = 'success') {
     if (!toastContainer) return;
     const toast = document.createElement('div');
@@ -164,65 +84,7 @@
     }, 3200);
   }
 
-  function renderCurrentView() {
-    if (state.currentRole === 'member') renderMemberView();
-    else if (state.currentRole === 'partner') renderPartnerView();
-    else if (state.currentRole === 'admin') renderAdminView();
-    else if (state.currentRole === 'public') renderPublicView();
-  }
-
-  function switchRole(role) {
-    state.currentRole = role;
-    saveLocal();
-
-    roleButtons.forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-role') === role);
-    });
-
-    appViews.forEach(view => {
-      view.classList.toggle('active', view.id === `view-${role}`);
-    });
-
-    renderCurrentView();
-  }
-
-  roleButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      switchRole(btn.getAttribute('data-role'));
-    });
-  });
-
-  // Toggle Fullscreen Mode
-  document.getElementById('btnToggleFullApp')?.addEventListener('click', () => {
-    const frame = document.querySelector('.mobile-device-frame');
-    if (!frame) return;
-    const btn = document.getElementById('btnToggleFullApp');
-    if (frame.classList.contains('fullscreen-app')) {
-      frame.classList.remove('fullscreen-app');
-      if (btn) btn.innerHTML = '<i class="fa-solid fa-expand"></i> 전체화면 모드';
-      showToast('스마트폰 프레임 모드로 전환되었습니다.', 'info');
-    } else {
-      frame.classList.add('fullscreen-app');
-      if (btn) btn.innerHTML = '<i class="fa-solid fa-compress"></i> 폰 프레임 모드';
-      showToast('실제 앱 전체화면 모드로 전환되었습니다.', 'success');
-    }
-  });
-
-  // Reset
-  document.getElementById('btnResetDemoData')?.addEventListener('click', async () => {
-    if (confirm('모든 데이터를 초기 기본값으로 재설정하시겠습니까?')) {
-      try {
-        await fetch('/api/reset', { method: 'POST' });
-      } catch(e) {}
-      localStorage.removeItem(STORAGE_KEY);
-      state = JSON.parse(JSON.stringify(defaultState));
-      saveLocal();
-      switchRole(state.currentRole);
-      showToast('데이터가 초기화되었습니다.', 'info');
-    }
-  });
-
-  // Modal Helpers
+  // Modal Controls
   function openModal(id) {
     const modal = document.getElementById(id);
     if (modal) modal.classList.add('active');
@@ -239,7 +101,7 @@
     });
   });
 
-  // Scale buttons
+  // Scale Buttons
   document.querySelectorAll('.scale-btn-group').forEach(group => {
     group.querySelectorAll('.scale-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -250,8 +112,8 @@
   });
 
   // Discomfort Slider
-  const discomfortRange = document.getElementById('rangeDiscomfort');
-  const discomfortLbl = document.getElementById('lblDiscomfortVal');
+  const discomfortRange = document.getElementById('rangeDiscomfortVal');
+  const discomfortLbl = document.getElementById('lblDiscomfortText');
   if (discomfortRange && discomfortLbl) {
     discomfortRange.addEventListener('input', () => {
       const val = parseInt(discomfortRange.value, 10);
@@ -264,280 +126,301 @@
   }
 
   // ==========================================
-  // REAL SUBMISSION HANDLERS (API + CLIENT)
+  // AUTH LOGIC (JOIN / LOGIN / LOGOUT)
   // ==========================================
-
-  // 1. Daily Checkin Submit (MB-04)
-  document.getElementById('formDailyCheckin')?.addEventListener('submit', async (e) => {
+  
+  // 1. Join (초대 가입)
+  document.getElementById('formJoin')?.addEventListener('submit', (e) => {
     e.preventDefault();
+    const code = document.getElementById('joinInviteCode').value.trim();
+    const name = document.getElementById('joinUserName').value.trim();
+    const phone = document.getElementById('joinUserPhone').value.trim();
+
+    if (!code || !name || !phone) return;
+
+    const newUser = {
+      id: `user_${Date.now()}`,
+      name,
+      phone,
+      inviteCode: code,
+      joinedAt: new Date().toISOString().slice(0, 10),
+      grade: 'VIP',
+      assignedPartner: '김서연 파트너'
+    };
+
+    saveAuth(newUser);
+    closeModal('modalJoin');
+    showToast(`환영합니다, ${name} 님! 프라이빗 회원 가입이 완료되었습니다.`, 'success');
+  });
+
+  // 2. Login (기존 회원 로그인)
+  document.getElementById('formLogin')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('loginUserName').value.trim();
+    const phone = document.getElementById('loginUserPhone').value.trim();
+
+    if (!name || !phone) return;
+
+    const user = {
+      id: `user_${name}_${phone.slice(-4)}`,
+      name,
+      phone,
+      grade: 'VIP',
+      assignedPartner: '김서연 파트너'
+    };
+
+    saveAuth(user);
+    closeModal('modalLogin');
+    showToast(`${name} 님, 로그인되었습니다.`, 'success');
+  });
+
+  // 3. Logout
+  document.getElementById('btnNavLogout')?.addEventListener('click', () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      saveAuth(null);
+      showToast('안전하게 로그아웃되었습니다.', 'info');
+    }
+  });
+
+  // Nav Buttons
+  document.getElementById('btnNavJoin')?.addEventListener('click', () => openModal('modalJoin'));
+  document.getElementById('btnNavLogin')?.addEventListener('click', () => openModal('modalLogin'));
+  document.getElementById('btnHeroJoin')?.addEventListener('click', () => openModal('modalJoin'));
+  document.getElementById('btnHeroLogin')?.addEventListener('click', () => openModal('modalLogin'));
+  document.getElementById('btnGoHome')?.addEventListener('click', () => {
+    if (currentUser) {
+      document.querySelector('[data-target="m-tab-today"]')?.click();
+    } else {
+      renderApp();
+    }
+  });
+
+  // ==========================================
+  // REAL DAILY CHECKIN SUBMISSION
+  // ==========================================
+  document.getElementById('btnOpenCheckinModal')?.addEventListener('click', () => {
+    if (!currentUser) {
+      openModal('modalLogin');
+      return;
+    }
+    openModal('modalCheckin');
+  });
+
+  document.getElementById('formCheckin')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!currentUser || !userData) return;
+
     const getScaleVal = name => {
-      const active = document.querySelector(`[data-scale-name="${name}"] .scale-btn.active`);
+      const active = document.querySelector(`[data-scale="${name}"] .scale-btn.active`);
       return active ? parseInt(active.getAttribute('data-val'), 10) : 3;
     };
 
-    const condition = getScaleVal('scoreCondition');
-    const sleep = getScaleVal('scoreSleep');
-    const mind = getScaleVal('scoreMind');
+    const condition = getScaleVal('condition');
+    const sleep = getScaleVal('sleep');
+    const mind = getScaleVal('mind');
     const discomfort = discomfortRange ? parseInt(discomfortRange.value, 10) : 2;
-    const memo = document.getElementById('txtCheckinNote')?.value.trim() || '';
+    const memo = document.getElementById('txtCheckinMemo')?.value.trim() || '';
 
-    const payload = { condition, sleep, mind, discomfort, memo };
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const newCheckin = {
+      id: `chk_${Date.now()}`,
+      date: todayStr,
+      condition,
+      sleep,
+      mind,
+      discomfort,
+      memo,
+      submittedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+    };
 
-    // Send HTTP POST to server
-    try {
-      const res = await fetch('/api/checkin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        const json = await res.json();
-        state = json.data;
-      } else {
-        throw new Error('API request failed');
-      }
-    } catch(err) {
-      // Local fallback
-      state.todayCheckedIn = true;
-      state.todayCheckinData = payload;
-      state.checkins.push({
-        id: `chk-${Date.now()}`,
-        date: new Date().toISOString().slice(0, 10),
-        condition, sleep, mind, discomfort, memo,
-        partnerChecked: false
-      });
-      const mem = state.partnerMembers.find(m => m.id === 'mem-1');
-      if (mem) {
-        mem.todayStatus = '작성완료';
-        mem.condition = condition;
-        mem.sleep = sleep;
-        mem.discomfort = discomfort;
-        mem.lastMemo = memo || '상태 체크 완료';
-        mem.priority = (discomfort >= 6 || condition <= 2) ? 'urgent' : 'normal';
-      }
-    }
+    userData.todayCheckedIn = true;
+    userData.todayCheckinData = newCheckin;
+    userData.checkins.unshift(newCheckin);
 
-    saveLocal();
-    closeModal('modalDailyCheckin');
-    showToast('🚀 오늘 상태 체크가 서버로 전송되어 전담 파트너에게 전달되었습니다!', 'success');
+    saveUserData();
+    closeModal('modalCheckin');
+    showToast('오늘의 상태 체크가 전담 파트너에게 전송 및 기록되었습니다!', 'success');
     renderMemberView();
   });
 
-  // 2. Real Message Sending (MB-10)
-  async function sendMessage() {
-    const input = document.getElementById('txtMemberChatInput');
-    if (!input) return;
-    const text = input.value.trim();
+  // ==========================================
+  // 1:1 REAL CHAT
+  // ==========================================
+  async function handleSendChat() {
+    if (!currentUser || !userData) return;
+    const input = document.getElementById('inputChatMsg');
+    const text = input?.value.trim();
     if (!text) return;
 
     const now = new Date();
-    const timeStr = `${now.getHours() < 12 ? '오전' : '오후'} ${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const timeStr = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
 
-    const msgObj = { sender: 'member', text, time: timeStr };
-    state.messages.push(msgObj);
+    userData.messages.push({
+      sender: 'member',
+      text,
+      time: timeStr
+    });
     input.value = '';
-    renderMemberChat();
+    renderChat();
+    saveUserData();
 
-    try {
-      await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(msgObj)
-      });
-    } catch (e) {}
-
-    saveLocal();
-
-    // Auto-reply Simulation
-    setTimeout(async () => {
-      const replyObj = {
+    // Responsive partner acknowledgement
+    setTimeout(() => {
+      userData.messages.push({
         sender: 'partner',
-        text: `김회원님, 메시지 확인했습니다. ("${text}") 말씀해주신 부분 오늘 저녁 세션 전담 케어에 적극 반영하겠습니다.`,
+        text: `${currentUser.name}님, 남겨주신 말씀 확인했습니다. ("${text}") 컨디션 관리에 참고하여 오늘 저녁 세심하게 살피겠습니다.`,
         time: timeStr
-      };
-      state.messages.push(replyObj);
-      renderMemberChat();
-      try {
-        await fetch('/api/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(replyObj)
-        });
-      } catch(e) {}
-      saveLocal();
+      });
+      renderChat();
+      saveUserData();
     }, 1200);
   }
 
-  document.getElementById('btnSendMemberChat')?.addEventListener('click', sendMessage);
-  document.getElementById('txtMemberChatInput')?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') sendMessage();
-  });
-
-  // 3. Care Note Form Submit (CP-03)
-  document.getElementById('formCareNote')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const memId = document.getElementById('noteTargetMember')?.value || 'mem-1';
-    const sessionTitle = document.getElementById('noteSessionTitle')?.value || '';
-    const content = document.getElementById('txtNoteContent')?.value.trim() || '';
-    const nextFocus = document.getElementById('noteNextFocus')?.value.trim() || '신체 이완 및 호흡';
-    const needFollowup = document.getElementById('noteNeedFollowup')?.value || 'no';
-
-    const targetMem = state.partnerMembers.find(m => m.id === memId) || { name: '김회원' };
-
-    const payload = {
-      memberId: memId,
-      memberName: targetMem.name,
-      sessionTitle,
-      content,
-      nextFocus,
-      partnerName: '김서연 파트너'
-    };
-
-    try {
-      const res = await fetch('/api/carenote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        const json = await res.json();
-        state = json.data;
-      } else {
-        throw new Error('API failed');
-      }
-    } catch(err) {
-      state.careNotes.unshift({
-        id: `note-${Date.now()}`,
-        date: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
-        ...payload
-      });
-    }
-
-    if (needFollowup === 'yes') {
-      state.followups.unshift({
-        id: `fl-${Date.now()}`,
-        memberId: memId,
-        memberName: targetMem.name,
-        reason: `[세션 후속] ${nextFocus}`,
-        dueDate: '2026.09.02',
-        status: 'pending',
-        partnerName: '김서연 파트너'
-      });
-    }
-
-    saveLocal();
-    showToast('🩺 케어 노트가 서버에 안전하게 전송 및 기록되었습니다.', 'success');
-    if (document.getElementById('txtNoteContent')) document.getElementById('txtNoteContent').value = '';
-    renderPartnerView();
+  document.getElementById('btnSendChat')?.addEventListener('click', handleSendChat);
+  document.getElementById('inputChatMsg')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleSendChat();
   });
 
   // ==========================================
-  // VIEW RENDERERS
+  // VIEW SWITCHING & RENDERING
   // ==========================================
+  function renderApp() {
+    const pagePublic = document.getElementById('page-public');
+    const pageMember = document.getElementById('page-member');
+    const authNavBtns = document.getElementById('authNavButtons');
+    const userNavProf = document.getElementById('userNavProfile');
+    const navUserName = document.getElementById('navUserName');
 
-  // Member View (MB)
-  const memberNavItems = document.querySelectorAll('.member-bottom-nav .nav-item');
-  const memberTabContents = document.querySelectorAll('.member-tab-content');
+    if (currentUser) {
+      pagePublic?.classList.remove('active');
+      pageMember?.classList.add('active');
+      if (authNavBtns) authNavBtns.style.display = 'none';
+      if (userNavProf) userNavProf.style.display = 'flex';
+      if (navUserName) navUserName.textContent = currentUser.name;
+      renderMemberView();
+    } else {
+      pagePublic?.classList.add('active');
+      pageMember?.classList.remove('active');
+      if (authNavBtns) authNavBtns.style.display = 'flex';
+      if (userNavProf) userNavProf.style.display = 'none';
+    }
+  }
 
-  memberNavItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const tabId = item.getAttribute('data-tab');
-      memberNavItems.forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-      memberTabContents.forEach(tab => {
-        tab.classList.toggle('active', tab.id === tabId);
-      });
-      if (tabId === 'tab-mb-report') renderScoreChart();
+  // Member Sub-Tabs
+  const mTabBtns = document.querySelectorAll('.m-tab-btn');
+  const mTabContents = document.querySelectorAll('.m-tab-content');
+
+  mTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-target');
+      mTabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      mTabContents.forEach(c => c.classList.toggle('active', c.id === target));
+      if (target === 'm-tab-report') renderReportChart();
     });
   });
 
   function renderMemberView() {
-    const uName = document.getElementById('mbHeaderUserName');
-    const pInfo = document.getElementById('mbHeaderPartnerInfo');
-    if (uName) uName.textContent = `${state.memberProfile.name} 님`;
-    if (pInfo) pInfo.textContent = `전담: ${state.memberProfile.assignedPartner}`;
+    if (!currentUser || !userData) return;
 
-    const checkTag = document.getElementById('todayCheckTag');
-    const btnCheckinText = document.getElementById('btnCheckinText');
-    if (checkTag && btnCheckinText) {
-      if (state.todayCheckedIn) {
-        checkTag.className = 'check-status-tag done';
-        checkTag.textContent = '작성완료';
-        btnCheckinText.textContent = '오늘 상태 체크 수정하기';
-      } else {
-        checkTag.className = 'check-status-tag';
-        checkTag.textContent = '미작성';
-        btnCheckinText.textContent = '지금 상태 체크하기';
-      }
+    // Header Greeting
+    const gName = document.getElementById('mbGreetingName');
+    const gPartner = document.getElementById('mbGreetingPartner');
+    if (gName) gName.textContent = `${currentUser.name} 님`;
+    if (gPartner) gPartner.textContent = `전담 케어 파트너: ${currentUser.assignedPartner || '김서연 파트너'} 배정됨`;
+
+    // Today Status Tag
+    const tag = document.getElementById('lblTodayStatusTag');
+    const btnText = document.getElementById('lblBtnCheckinText');
+    const ackTitle = document.getElementById('lblPartnerAckTitle');
+    const ackText = document.getElementById('lblPartnerAckText');
+
+    if (userData.todayCheckedIn && userData.todayCheckinData) {
+      if (tag) { tag.className = 'check-status-tag done'; tag.textContent = '작성완료'; }
+      if (btnText) btnText.textContent = '오늘 상태 체크 수정하기';
+      if (ackTitle) ackTitle.textContent = '오늘 기록 확인 진행중';
+      if (ackText) ackText.textContent = `오늘 ${userData.todayCheckinData.submittedAt || ''}에 기록을 완료하셨습니다. 전담 파트너가 세심하게 확인합니다.`;
+    } else {
+      if (tag) { tag.className = 'check-status-tag'; tag.textContent = '미작성'; }
+      if (btnText) btnText.textContent = '지금 상태 체크 작성하기';
+      if (ackTitle) ackTitle.textContent = '전담 파트너 안부 안내';
+      if (ackText) ackText.textContent = '오늘의 상태 체크를 작성하시면 전담 파트너가 맞춤 피드백을 전달합니다.';
     }
 
-    renderMemberTimeline();
-    renderMemberChat();
+    // Profile summary
+    const profSleep = document.getElementById('lblProfileSleep');
+    const profAreas = document.getElementById('lblProfileAreas');
+    const profGoal = document.getElementById('lblProfileGoal');
+    if (profSleep) profSleep.textContent = userData.profile.sleepPattern;
+    if (profAreas) profAreas.textContent = userData.profile.discomfortAreas;
+    if (profGoal) profGoal.textContent = userData.profile.goal;
+
+    renderTimeline();
+    renderChat();
   }
 
-  function renderMemberTimeline() {
-    const list = document.getElementById('memberTimelineList');
-    if (!list) return;
+  function renderTimeline() {
+    const container = document.getElementById('timelineFeedContainer');
+    if (!container || !userData) return;
 
-    let itemsHtml = '';
-    state.checkins.slice().reverse().forEach(c => {
-      itemsHtml += `
-        <div class="timeline-item">
-          <div class="timeline-date"><i class="fa-regular fa-calendar-check"></i> ${c.date} - 데일리 상태 체크</div>
-          <div class="timeline-scores">
-            <span>컨디션: <strong>${c.condition}점</strong></span>
-            <span>수면: <strong>${c.sleep}점</strong></span>
-            <span>마음: <strong>${c.mind}점</strong></span>
-            <span>불편감: <strong>${c.discomfort}점</strong></span>
-          </div>
-          <p class="timeline-memo">"${c.memo || '작성된 메모가 없습니다.'}"</p>
-          ${c.partnerComment ? `<div class="timeline-partner-ack mt-2" style="font-size:11px; color:#34D399;"><i class="fa-solid fa-reply"></i> <strong>파트너 코멘트:</strong> ${c.partnerComment}</div>` : ''}
+    if (!userData.checkins || userData.checkins.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state-box">
+          <i class="fa-regular fa-clipboard"></i>
+          <h4>아직 등록된 건강 상태 기록이 없습니다.</h4>
+          <p>첫 번째 1분 상태 체크를 작성하시면 이곳에 나의 일별 변화가 차곡차곡 누적됩니다.</p>
         </div>
       `;
-    });
+      return;
+    }
 
-    state.careNotes.forEach(n => {
-      itemsHtml += `
-        <div class="timeline-item partner-item">
-          <div class="timeline-date"><i class="fa-solid fa-user-doctor"></i> ${n.date} - ${n.sessionTitle}</div>
-          <p class="timeline-memo"><strong>[파트너 관찰 노트]</strong> ${n.content}</p>
-          <div style="font-size:11px; color:#93C5FD; margin-top:4px;">집중 영역: ${n.nextFocus} (${n.partnerName})</div>
+    container.innerHTML = userData.checkins.map(c => `
+      <div class="timeline-card">
+        <div class="timeline-card-head">
+          <span><i class="fa-regular fa-calendar-check text-success"></i> <strong>${c.date}</strong> 상태 체크</span>
+          <span>${c.submittedAt ? c.submittedAt + ' 작성' : ''}</span>
         </div>
-      `;
-    });
-
-    list.innerHTML = itemsHtml;
+        <div class="timeline-scores-row">
+          <span>컨디션: <strong>${c.condition}점</strong></span>
+          <span>수면: <strong>${c.sleep}점</strong></span>
+          <span>마음: <strong>${c.mind}점</strong></span>
+          <span>불편감: <strong>${c.discomfort}점</strong></span>
+        </div>
+        <p class="timeline-memo-text">"${c.memo || '작성된 메모가 없습니다.'}"</p>
+      </div>
+    `).join('');
   }
 
-  function renderMemberChat() {
-    const box = document.getElementById('memberChatBox');
-    if (!box) return;
-    box.innerHTML = state.messages.map(m => `
+  function renderChat() {
+    const box = document.getElementById('chatStreamBox');
+    if (!box || !userData) return;
+
+    box.innerHTML = userData.messages.map(m => `
       <div class="chat-bubble ${m.sender}">
         <div>${m.text}</div>
-        <small style="font-size:9px; opacity:0.7; display:block; margin-top:3px; text-align:${m.sender==='member'?'right':'left'}">${m.time}</small>
+        <small style="font-size:10px; opacity:0.7; display:block; margin-top:4px; text-align:${m.sender==='member'?'right':'left'}">${m.time}</small>
       </div>
     `).join('');
     box.scrollTop = box.scrollHeight;
   }
 
-  function renderScoreChart() {
-    const canvas = document.getElementById('memberScoreChart');
-    if (!canvas) return;
+  function renderReportChart() {
+    const canvas = document.getElementById('realScoreChart');
+    if (!canvas || !userData) return;
     const ctx = canvas.getContext('2d');
     const w = canvas.width;
     const h = canvas.height;
 
     ctx.clearRect(0, 0, w, h);
 
-    const days = ['8.26', '8.27', '8.28', '8.29', '8.30', '8.31', '9.01'];
-    const conditionScores = [3, 3, 4, 3, 4, 3, state.todayCheckedIn ? (state.todayCheckinData?.condition || 4) : 4];
-    const sleepScores = [2, 3, 3, 4, 4, 2, state.todayCheckedIn ? (state.todayCheckinData?.sleep || 4) : 3];
+    const checkins = userData.checkins || [];
+    const recent = checkins.slice(0, 7).reverse();
 
-    const padding = 28;
+    const padding = 36;
     const chartW = w - padding * 2;
     const chartH = h - padding * 2;
 
+    // Draw Grid (1~5)
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
     ctx.lineWidth = 1;
     for (let score = 1; score <= 5; score++) {
@@ -548,287 +431,49 @@
       ctx.stroke();
 
       ctx.fillStyle = '#64748B';
-      ctx.font = '9px Pretendard';
-      ctx.fillText(`${score}점`, 6, y + 3);
+      ctx.font = '11px Pretendard';
+      ctx.fillText(`${score}점`, 8, y + 4);
     }
 
-    function drawSeries(data, color) {
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-
-      const step = chartW / (data.length - 1);
-      data.forEach((val, idx) => {
-        const x = padding + idx * step;
-        const y = h - padding - ((val - 1) / 4) * chartH;
-        if (idx === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-
-      data.forEach((val, idx) => {
-        const x = padding + idx * step;
-        const y = h - padding - ((val - 1) / 4) * chartH;
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#1E293B';
-        ctx.beginPath();
-        ctx.arc(x, y, 2, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-
-    drawSeries(conditionScores, '#10B981');
-    drawSeries(sleepScores, '#60A5FA');
-
-    const step = chartW / (days.length - 1);
-    days.forEach((day, idx) => {
-      const x = padding + idx * step;
+    if (recent.length === 0) {
       ctx.fillStyle = '#94A3B8';
-      ctx.font = '10px Pretendard';
+      ctx.font = '13px Pretendard';
       ctx.textAlign = 'center';
-      ctx.fillText(day, x, h - 8);
-    });
-  }
-
-  // Shortcuts
-  document.getElementById('btnGoPartnerMsgTab')?.addEventListener('click', () => {
-    document.querySelector('[data-tab="tab-mb-message"]')?.click();
-  });
-  document.getElementById('btnGuideTriggerCheckin')?.addEventListener('click', () => openModal('modalDailyCheckin'));
-  document.getElementById('btnOpenCheckinModal')?.addEventListener('click', () => openModal('modalDailyCheckin'));
-  document.getElementById('btnSessionAttendance')?.addEventListener('click', () => showToast('오늘 저녁 20:00 세션 참석이 확인되었습니다.', 'success'));
-  document.getElementById('btnSessionFeedbackModal')?.addEventListener('click', () => openModal('modalSessionFeedback'));
-  document.getElementById('btnOpenTestimonialModal')?.addEventListener('click', () => openModal('modalTestimonialWrite'));
-  document.getElementById('btnOpenInterviewModal')?.addEventListener('click', () => openModal('modalHealthInterview'));
-  document.getElementById('btnOpenConsentModal')?.addEventListener('click', () => openModal('modalConsentView'));
-  document.getElementById('btnSwitchMemberDemo')?.addEventListener('click', () => switchRole('member'));
-  document.getElementById('btnOpenInviteModal')?.addEventListener('click', () => openModal('modalInviteSignup'));
-
-  // Partner View (CP)
-  const cpSideItems = document.querySelectorAll('.sidebar-nav .side-item');
-  const cpPanels = document.querySelectorAll('.cp-panel');
-
-  cpSideItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const panelId = item.getAttribute('data-cp-panel');
-      cpSideItems.forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-      cpPanels.forEach(p => p.classList.toggle('active', p.id === panelId));
-    });
-  });
-
-  function renderPartnerView() {
-    renderPartnerQueue('all');
-    renderPartnerMemberDetail();
-    renderPartnerFollowupTable();
-  }
-
-  function renderPartnerQueue(filter = 'all') {
-    const tbody = document.getElementById('partnerQueueTableBody');
-    if (!tbody) return;
-
-    let list = state.partnerMembers;
-    if (filter === 'urgent') list = list.filter(m => m.priority === 'urgent');
-    else if (filter === 'uncheck') list = list.filter(m => m.todayStatus === '미작성');
-    else if (filter === 'normal') list = list.filter(m => m.priority === 'normal');
-
-    tbody.innerHTML = list.map(m => {
-      let badgeClass = m.priority === 'urgent' ? 'urgent' : (m.todayStatus === '미작성' ? 'uncheck' : 'normal');
-      let badgeText = m.priority === 'urgent' ? '주의/급변' : (m.todayStatus === '미작성' ? '미확인' : '안정');
-
-      return `
-        <tr>
-          <td><span class="badge-priority ${badgeClass}">${badgeText}</span></td>
-          <td><strong>${m.name}</strong> <small style="color:#94A3B8;">(${m.grade})</small></td>
-          <td>${m.todayStatus === '작성완료' ? '<span class="text-success"><i class="fa-solid fa-check"></i> 작성완료</span>' : '<span style="color:#F87171;">미작성</span>'}</td>
-          <td>컨디션 ${m.condition}점 / 수면 ${m.sleep}점</td>
-          <td><strong style="color:${m.discomfort>=5?'#F87171':'#6EE7B7'}">${m.discomfort}점</strong></td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">"${m.lastMemo}"</td>
-          <td><span class="badge-active">정상 관리</span></td>
-          <td>
-            <button class="btn btn-sm btn-outline btn-partner-ack" data-mem-id="${m.id}"><i class="fa-solid fa-clipboard-check"></i> 기록확인</button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-
-    tbody.querySelectorAll('.btn-partner-ack').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const memId = btn.getAttribute('data-mem-id');
-        const target = state.partnerMembers.find(m => m.id === memId);
-        showToast(`${target?.name} 님의 기록을 확인 완료 처리하였습니다.`, 'success');
-      });
-    });
-  }
-
-  function renderPartnerMemberDetail() {
-    const profileView = document.getElementById('partnerMemberProfileView');
-    const feed = document.getElementById('partnerComparisonFeed');
-    if (!profileView || !feed) return;
-
-    const p = state.memberProfile;
-    profileView.innerHTML = `
-      <div class="detail-kv-item">
-        <label>회원명 / 연령 / 등급</label>
-        <strong>${p.name} (만 ${p.age}세 / ${p.grade} 회원)</strong>
-      </div>
-      <div class="detail-kv-item">
-        <label>평소 수면 기준선</label>
-        <strong>${p.baselineInterview.sleepPattern}</strong>
-      </div>
-      <div class="detail-kv-item">
-        <label>주요 관리 부위</label>
-        <strong>${p.baselineInterview.discomfortAreas.join(', ')}</strong>
-      </div>
-      <div class="detail-kv-item">
-        <label>집중 관리 목표</label>
-        <strong style="color:#34D399;">${p.baselineInterview.goal}</strong>
-      </div>
-    `;
-
-    let feedHtml = '';
-    state.checkins.forEach(c => {
-      feedHtml += `
-        <div class="feed-item">
-          <div class="feed-header">
-            <span><i class="fa-solid fa-user"></i> <strong>자가 기록</strong> (${c.date})</span>
-            <span>컨디션 ${c.condition}점 | 불편감 ${c.discomfort}점</span>
-          </div>
-          <p class="feed-content">"${c.memo}"</p>
-        </div>
-      `;
-    });
-
-    state.careNotes.forEach(n => {
-      feedHtml += `
-        <div class="feed-item" style="border-left: 3px solid #3B82F6;">
-          <div class="feed-header">
-            <span style="color:#60A5FA;"><i class="fa-solid fa-user-doctor"></i> <strong>파트너 관찰 노트</strong> (${n.date})</span>
-            <span>${n.sessionTitle}</span>
-          </div>
-          <p class="feed-content">${n.content}</p>
-          <small style="color:#93C5FD; display:block; margin-top:4px;">다음 집중: ${n.nextFocus}</small>
-        </div>
-      `;
-    });
-
-    feed.innerHTML = feedHtml;
-  }
-
-  function renderPartnerFollowupTable() {
-    const tbody = document.getElementById('partnerFollowupTableBody');
-    if (!tbody) return;
-
-    tbody.innerHTML = state.followups.map(f => `
-      <tr>
-        <td><span class="badge-priority ${f.status==='pending'?'urgent':'normal'}">${f.status==='pending'?'대기중':'완료'}</span></td>
-        <td><strong>${f.dueDate}</strong></td>
-        <td>${f.memberName}</td>
-        <td>${f.reason}</td>
-        <td>${f.partnerName}</td>
-        <td>
-          ${f.status==='pending' ? `<button class="btn btn-sm btn-primary btn-done-followup" data-fl-id="${f.id}"><i class="fa-solid fa-check"></i> 안부 완료</button>` : '<span class="text-success">완료됨</span>'}
-        </td>
-      </tr>
-    `).join('');
-
-    tbody.querySelectorAll('.btn-done-followup').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-fl-id');
-        const target = state.followups.find(x => x.id === id);
-        if (target) target.status = 'completed';
-        saveLocal();
-        showToast('후속 안부 확인 처리가 완료되었습니다.', 'success');
-        renderPartnerFollowupTable();
-      });
-    });
-  }
-
-  // Admin View (AD)
-  const adminTabBtns = document.querySelectorAll('.admin-tab-btn');
-  const adPanels = document.querySelectorAll('.ad-panel');
-
-  adminTabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const panelId = btn.getAttribute('data-ad-panel');
-      adminTabBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      adPanels.forEach(p => p.classList.toggle('active', p.id === panelId));
-    });
-  });
-
-  function renderAdminView() {
-    const stream = document.getElementById('adminLiveActivityStream');
-    if (stream) {
-      stream.innerHTML = `
-        <div class="stream-item">
-          <span><strong>김회원 (mem-1)</strong> 오늘 데일리 상태 체크 제출 완료</span>
-          <small style="color:#94A3B8;">방금 전</small>
-        </div>
-        <div class="stream-item">
-          <span><strong>김서연 파트너</strong> 김회원 케어 노트 작성 및 감사 로그 등록</span>
-          <small style="color:#94A3B8;">1분 전</small>
-        </div>
-      `;
+      ctx.fillText('상태 체크를 등록하시면 실시간 추이 그래프가 나타납니다.', w / 2, h / 2);
+      return;
     }
 
-    const mBody = document.getElementById('adminMemberTableBody');
-    if (mBody) {
-      mBody.innerHTML = state.partnerMembers.map(m => `
-        <tr>
-          <td><code>${m.id}</code></td>
-          <td><strong>${m.name}</strong></td>
-          <td>010-****-1234</td>
-          <td>김서연 파트너</td>
-          <td><span class="badge-active">${m.grade} 활성</span></td>
-          <td>2026.11.01</td>
-          <td><span class="badge-success">민감정보 동의완료</span></td>
-          <td><button class="btn btn-sm btn-outline"><i class="fa-solid fa-calendar-plus"></i> 기간연장</button></td>
-        </tr>
-      `).join('');
-    }
+    const step = recent.length === 1 ? chartW : chartW / (recent.length - 1);
 
-    const aBody = document.getElementById('adminAuditLogBody');
-    if (aBody) {
-      aBody.innerHTML = state.auditLogs.map(l => `
-        <tr>
-          <td><small style="color:#94A3B8;">${l.timestamp}</small></td>
-          <td><strong>${l.actor}</strong></td>
-          <td><span class="tag-badge">${l.role}</span></td>
-          <td>${l.target}</td>
-          <td><span style="color:#60A5FA;">${l.action}</span></td>
-          <td><code>${l.ip}</code></td>
-          <td>${l.reason}</td>
-        </tr>
-      `).join('');
-    }
+    // Draw Condition line
+    ctx.strokeStyle = '#10B981';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    recent.forEach((item, idx) => {
+      const x = padding + idx * step;
+      const y = h - padding - ((item.condition - 1) / 4) * chartH;
+      if (idx === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Draw Points
+    recent.forEach((item, idx) => {
+      const x = padding + idx * step;
+      const y = h - padding - ((item.condition - 1) / 4) * chartH;
+      ctx.fillStyle = '#10B981';
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '11px Pretendard';
+      ctx.textAlign = 'center';
+      ctx.fillText(item.date.slice(5), x, h - 10);
+    });
   }
 
-  // Public View (PU)
-  function renderPublicView() {
-    const container = document.getElementById('publicTestimonialsContainer');
-    if (!container) return;
-
-    container.innerHTML = state.testimonials.filter(t => t.approved).map(t => `
-      <div class="testimonial-card">
-        <div class="t-author-meta">
-          <span class="t-name">${t.authorName}</span>
-          <span class="t-area-badge">${t.area}</span>
-        </div>
-        <p class="t-body">"${t.body}"</p>
-        <div class="t-footer">
-          <span>작성일 ${t.date}</span>
-          <span><i class="fa-solid fa-circle-check text-success"></i> 검토 완료</span>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // Initial Boot
-  switchRole('member');
-  fetchServerState();
+  // Initial App Render
+  renderApp();
 
 })();

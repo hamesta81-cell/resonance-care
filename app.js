@@ -743,17 +743,19 @@
   // YOUTUBE LIVE STREAMING HANDLERS
   // ==========================================
   const YOUTUBE_STREAM_STORAGE_KEY = 'resonance_youtube_live_url';
+  const DEFAULT_YOUTUBE_URL = 'https://www.youtube.com/@Resonance2026-e7c';
   
   document.getElementById('btnOpenYoutubeLive')?.addEventListener('click', () => {
-    const savedUrl = localStorage.getItem(YOUTUBE_STREAM_STORAGE_KEY);
+    const savedUrl = localStorage.getItem(YOUTUBE_STREAM_STORAGE_KEY) || DEFAULT_YOUTUBE_URL;
     const input = document.getElementById('inputYoutubeStreamUrl');
     const iframe = document.getElementById('youtubeLiveFrame');
     const externalBtn = document.getElementById('btnOpenYoutubeExternal');
 
-    if (savedUrl && input && iframe) {
-      input.value = savedUrl;
-      // Convert standard watch URL to embed URL if needed
-      let embedUrl = savedUrl;
+    if (input) input.value = savedUrl;
+    if (externalBtn) externalBtn.href = savedUrl;
+
+    if (iframe) {
+      let embedUrl = 'https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_BQ5Azg';
       if (savedUrl.includes('watch?v=')) {
         const vId = savedUrl.split('watch?v=')[1]?.split('&')[0];
         embedUrl = `https://www.youtube.com/embed/${vId}?autoplay=1`;
@@ -762,7 +764,6 @@
         embedUrl = `https://www.youtube.com/embed/${vId}?autoplay=1`;
       }
       iframe.src = embedUrl;
-      if (externalBtn) externalBtn.href = savedUrl;
     }
     openModal('modalYoutubeLive');
   });

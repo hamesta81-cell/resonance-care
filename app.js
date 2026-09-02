@@ -739,6 +739,57 @@
     renderChat();
   });
 
+  // ==========================================
+  // YOUTUBE LIVE STREAMING HANDLERS
+  // ==========================================
+  const YOUTUBE_STREAM_STORAGE_KEY = 'resonance_youtube_live_url';
+  
+  document.getElementById('btnOpenYoutubeLive')?.addEventListener('click', () => {
+    const savedUrl = localStorage.getItem(YOUTUBE_STREAM_STORAGE_KEY);
+    const input = document.getElementById('inputYoutubeStreamUrl');
+    const iframe = document.getElementById('youtubeLiveFrame');
+    const externalBtn = document.getElementById('btnOpenYoutubeExternal');
+
+    if (savedUrl && input && iframe) {
+      input.value = savedUrl;
+      // Convert standard watch URL to embed URL if needed
+      let embedUrl = savedUrl;
+      if (savedUrl.includes('watch?v=')) {
+        const vId = savedUrl.split('watch?v=')[1]?.split('&')[0];
+        embedUrl = `https://www.youtube.com/embed/${vId}?autoplay=1`;
+      } else if (savedUrl.includes('youtu.be/')) {
+        const vId = savedUrl.split('youtu.be/')[1]?.split('?')[0];
+        embedUrl = `https://www.youtube.com/embed/${vId}?autoplay=1`;
+      }
+      iframe.src = embedUrl;
+      if (externalBtn) externalBtn.href = savedUrl;
+    }
+    openModal('modalYoutubeLive');
+  });
+
+  document.getElementById('btnUpdateYoutubeUrl')?.addEventListener('click', () => {
+    const input = document.getElementById('inputYoutubeStreamUrl');
+    const newUrl = input?.value.trim();
+    if (!newUrl) return;
+
+    localStorage.setItem(YOUTUBE_STREAM_STORAGE_KEY, newUrl);
+    const iframe = document.getElementById('youtubeLiveFrame');
+    const externalBtn = document.getElementById('btnOpenYoutubeExternal');
+
+    let embedUrl = newUrl;
+    if (newUrl.includes('watch?v=')) {
+      const vId = newUrl.split('watch?v=')[1]?.split('&')[0];
+      embedUrl = `https://www.youtube.com/embed/${vId}?autoplay=1`;
+    } else if (newUrl.includes('youtu.be/')) {
+      const vId = newUrl.split('youtu.be/')[1]?.split('?')[0];
+      embedUrl = `https://www.youtube.com/embed/${vId}?autoplay=1`;
+    }
+    if (iframe) iframe.src = embedUrl;
+    if (externalBtn) externalBtn.href = newUrl;
+
+    showToast('유튜브 생중계 스트림 주소가 성공적으로 변경되었습니다!', 'success');
+  });
+
   document.getElementById('btnJoinLiveSession')?.addEventListener('click', () => {
     alert('[원격 치유 세션 안내]\n오늘 20:00 저녁 웰니스 호흡 & 이완 세션 룸이 19:50에 개설됩니다. (김복선 치유사 진행)');
   });

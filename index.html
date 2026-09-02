@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RESONANCE CARE | 리조넌스 케어 - 개인 건강 동반자형 프라이빗 회원제 플랫폼</title>
+  <title>RESONANCE CARE V2 | 리조넌스 케어 - 프라이빗 회원 혜택 · 건강정보 · 커뮤니티</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -17,7 +17,7 @@
     <div class="header-left">
       <div class="brand-badge" id="btnGoHome" style="cursor:pointer;">
         <span class="logo-mark"><i class="fa-solid fa-seedling"></i></span>
-        <span class="brand-title">RESONANCE <strong>CARE</strong></span>
+        <span class="brand-title">RESONANCE <strong>CARE</strong> <small class="v2-pill">V2.0</small></span>
         <span class="brand-tag">Private Membership</span>
       </div>
     </div>
@@ -27,7 +27,7 @@
         <button class="btn btn-outline btn-sm" id="btnNavLogin"><i class="fa-solid fa-arrow-right-to-bracket"></i> 로그인</button>
         <button class="btn btn-primary btn-sm" id="btnNavJoin"><i class="fa-solid fa-envelope-open-text"></i> 초대 가입</button>
       </div>
-      <div id="userNavProfile" style="display:none; align-items:center; gap:12px;">
+      <div id="userNavProfile" style="display:none; align-items:center; gap:10px;">
         <span class="user-pill-badge" id="navUserBadge"><i class="fa-solid fa-user-check"></i> <strong id="navUserName">회원</strong> 님</span>
         <button class="btn btn-outline btn-sm" id="btnNavLogout"><i class="fa-solid fa-arrow-right-from-bracket"></i> 로그아웃</button>
       </div>
@@ -48,11 +48,11 @@
          ======================================================== -->
     <section id="page-public" class="app-page active">
       <div class="public-hero">
-        <div class="hero-badge"><i class="fa-solid fa-lock"></i> 초대전용 프라이빗 웰니스 케어 멤버십</div>
-        <h1 class="hero-title">당신을 매일 기억하는<br><span class="gradient-text">개인 건강 동반자</span></h1>
+        <div class="hero-badge"><i class="fa-solid fa-lock"></i> 초대전용 프라이빗 웰니스 케어 멤버십 V2</div>
+        <h1 class="hero-title">당신을 매일 기억하는<br><span class="gradient-text">개인 건강 동반자 & 혜택 라운지</span></h1>
         <p class="hero-desc">
           병원 차트처럼 차갑지 않고, 과장된 치료를 약속하지 않습니다.<br>
-          회원별 전담 케어 파트너가 당신의 하루 컨디션을 살피고, 작은 변화를 장기적으로 기록합니다.
+          김복선 치유사가 당신의 하루 컨디션을 살피고, 7일 맞춤 플랜과 VIP 혜택을 함께 제공합니다.
         </p>
         <div class="hero-actions">
           <button class="btn btn-primary btn-lg" id="btnHeroJoin"><i class="fa-solid fa-envelope-open-text"></i> 초대 코드로 회원가입</button>
@@ -62,25 +62,30 @@
 
       <div class="public-features">
         <div class="feature-card">
-          <div class="feature-icon"><i class="fa-solid fa-heart-pulse"></i></div>
-          <h3>1. 매일 1분의 상태 체크</h3>
-          <p>컨디션, 수면, 마음, 신체 불편감을 간편히 기록하면 전담 파트너가 24시간 내 확인하고 살핍니다.</p>
+          <div class="feature-icon"><i class="fa-solid fa-calendar-check"></i></div>
+          <h3>1. 7일 개인 케어 플랜 & 데일리 체크</h3>
+          <p>매일 1분의 상태 체크와 맞춤 생활 습관 실천 태스크로 전담 치유사와 함께 몸의 균형을 되찾습니다.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fa-solid fa-user-doctor"></i></div>
-          <h3>2. 전담 케어 파트너 1:1 배정</h3>
-          <p>나만을 위한 케어 파트너가 세션 전후 컨디션을 살피고, 체감 경향 리포트를 함께 검토합니다.</p>
+          <div class="feature-icon"><i class="fa-solid fa-wallet"></i></div>
+          <h3>2. VIP 혜택 지갑 & 케어박스</h3>
+          <p>웰니스 케어 크레딧, 시즌별 프리미엄 전통 원료 케어박스, 지인 초대권이 지갑에 안전하게 보관됩니다.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
-          <h3>3. 민감 건강정보 분리 보호</h3>
-          <p>개인정보보호법 제23조를 철저히 준수하여 회원의 건강 데이터는 엄격히 분리 암호화 관리됩니다.</p>
+          <div class="feature-icon"><i class="fa-solid fa-book-medical"></i></div>
+          <h3>3. 건강 지식관 & 전통 원료 도감</h3>
+          <p>전문가가 감수한 계절별 생활 건강 아티클과 당귀, 황기 등 웰니스 전통 원료 백과를 열람하세요.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-users"></i></div>
+          <h3>4. 프라이빗 커뮤니티 & 그룹 라운지</h3>
+          <p>회원 전용 안부 라운지와 4주 수면 개선 등 프로그램 소그룹에서 따뜻한 경험을 나눕니다.</p>
         </div>
       </div>
     </section>
 
     <!-- ========================================================
-         PAGE 2: MEMBER APP (로그인 회원 전용 라운지)
+         PAGE 2: MEMBER V2 APP (로그인 회원 전용 라운지)
          ======================================================== -->
     <section id="page-member" class="app-page">
       <div class="member-app-container">
@@ -95,105 +100,264 @@
             </div>
           </div>
           <div class="membership-status-pill">
-            <span class="badge-gold" id="mbMembershipGrade">RESONANCE VIP</span>
-            <span class="badge-active">이용중</span>
+            <span class="badge-gold" id="mbMembershipGrade"><i class="fa-solid fa-crown"></i> VIP 멤버십</span>
+            <span class="badge-credit" id="mbTopCreditBadge"><i class="fa-solid fa-coins"></i> 50,000 P</span>
           </div>
         </div>
 
-        <!-- 4 Main App Tabs -->
-        <div class="member-tab-nav">
-          <button class="m-tab-btn active" data-target="m-tab-today"><i class="fa-solid fa-calendar-day"></i> 오늘 상태 체크</button>
-          <button class="m-tab-btn" data-target="m-tab-timeline"><i class="fa-solid fa-clock-rotate-left"></i> 건강 기록 타임라인</button>
-          <button class="m-tab-btn" data-target="m-tab-report"><i class="fa-solid fa-chart-line"></i> 주간 변화 리포트</button>
-          <button class="m-tab-btn" data-target="m-tab-chat"><i class="fa-solid fa-comments"></i> 파트너 1:1 대화</button>
+        <!-- 5 MAIN V2 TABS -->
+        <div class="member-tab-nav v2-tab-nav">
+          <button class="m-tab-btn active" data-target="m-tab-today"><i class="fa-solid fa-calendar-day"></i> 오늘</button>
+          <button class="m-tab-btn" data-target="m-tab-timeline"><i class="fa-solid fa-chart-pie"></i> 기록/리포트</button>
+          <button class="m-tab-btn" data-target="m-tab-community"><i class="fa-solid fa-comments"></i> 커뮤니티</button>
+          <button class="m-tab-btn" data-target="m-tab-knowledge"><i class="fa-solid fa-book-open"></i> 건강정보</button>
+          <button class="m-tab-btn" data-target="m-tab-wallet"><i class="fa-solid fa-wallet"></i> MY/혜택</button>
         </div>
 
-        <!-- TAB 1: TODAY CHECKIN -->
+        <!-- ====================================================
+             TAB 1: 오늘 (MB-12 오늘의 브리핑 + MB-13 7일 케어 플랜 + MB-14 세션)
+             ==================================================== -->
         <div id="m-tab-today" class="m-tab-content active">
           
-          <!-- Today Checkin Action Card -->
+          <!-- MB-12: 오늘의 케어 브리핑 & 상태 체크 -->
           <div class="today-action-hero">
             <div class="card-header-flex">
-              <span class="tag-badge"><i class="fa-solid fa-heart-pulse"></i> 데일리 상태 체크</span>
+              <span class="tag-badge"><i class="fa-solid fa-heart-pulse"></i> 데일리 상태 체크 (MB-12)</span>
               <span class="check-status-tag" id="lblTodayStatusTag">미작성</span>
             </div>
             <h3>오늘 하루 몸과 마음은 어떠신가요?</h3>
-            <p>1분이면 충분합니다. 기록을 남겨주시면 전담 파트너가 24시간 내 직접 확인합니다.</p>
+            <p>1분이면 충분합니다. 기록을 남겨주시면 김복선 치유사가 24시간 내 확인하고 피드백을 전달합니다.</p>
             <button class="btn btn-primary btn-lg mt-2" id="btnOpenCheckinModal">
               <i class="fa-solid fa-pen-to-square"></i> <span id="lblBtnCheckinText">지금 상태 체크 작성하기</span>
             </button>
           </div>
 
-          <!-- Partner Last Check Alert -->
+          <!-- 치유사 브리핑 알림 카드 -->
           <div class="partner-check-banner" id="bannerPartnerAck">
             <i class="fa-solid fa-circle-check"></i>
             <div>
-              <strong id="lblPartnerAckTitle">전담 파트너 안부 안내</strong>
-              <span id="lblPartnerAckText">오늘의 상태 체크를 작성하시면 전담 파트너가 맞춤 피드백을 전달합니다.</span>
+              <strong id="lblPartnerAckTitle">김복선 치유사 케어 브리핑</strong>
+              <span id="lblPartnerAckText">오늘의 상태 체크를 남기시면 맞춤 일일 생활 피드백이 브리핑됩니다.</span>
             </div>
           </div>
 
-          <!-- Quick Interview Summary Card -->
-          <div class="profile-summary-box">
+          <!-- MB-13: 7일 개인 케어 플랜 (일일 실천 체크) -->
+          <div class="care-plan-card">
             <div class="card-header-flex">
-              <h4><i class="fa-solid fa-clipboard-user"></i> 나의 건강 기준선 (문진표)</h4>
-              <button class="btn-text" id="btnEditInterview"><i class="fa-solid fa-pen"></i> 수정</button>
+              <div>
+                <h4><i class="fa-solid fa-list-check text-success"></i> 7일 개인 케어 플랜 (MB-13)</h4>
+                <small class="text-muted">김복선 치유사와 함께하는 일일 맞춤 실천 태스크</small>
+              </div>
+              <span class="plan-progress-pill" id="lblPlanProgressText">2 / 3 실천 완료 (67%)</span>
+            </div>
+            <div class="plan-task-list" id="planTaskListContainer">
+              <!-- Task Items generated dynamically -->
+            </div>
+          </div>
+
+          <!-- MB-14: 다가오는 세션 안내 -->
+          <div class="upcoming-session-card">
+            <div class="card-header-flex">
+              <span class="badge-gold"><i class="fa-solid fa-clock"></i> D-Day 오늘 20:00 예약</span>
+              <button class="btn-text" id="btnOpenSessionModal"><i class="fa-solid fa-calendar-plus"></i> 세션 변경/예약</button>
+            </div>
+            <h4>[원격] 저녁 웰니스 호흡 & 이완 치유 세션 (MB-14)</h4>
+            <p class="session-desc">진행: 김복선 치유사 · 20:00 ~ 20:45 (45분간 화상 룸 참여)</p>
+            <button class="btn btn-outline btn-sm mt-2" id="btnJoinLiveSession"><i class="fa-solid fa-video"></i> 세션 룸 입장 대기</button>
+          </div>
+
+          <!-- 1:1 치유사 대화 바로가기 배너 -->
+          <div class="partner-quick-chat-box">
+            <div class="card-header-flex">
+              <div>
+                <strong><i class="fa-solid fa-comment-dots text-primary"></i> 김복선 치유사 1:1 대화</strong>
+                <p id="lblLatestPartnerChatMsg" class="text-muted text-sm mt-1">"오늘 컨디션 관련해 궁금하신 점은 편하게 남겨주세요."</p>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btnOpenDirectChat"><i class="fa-solid fa-paper-plane"></i> 대화하기</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====================================================
+             TAB 2: 기록/리포트 (MB-07 타임라인 + MB-08 주간/월간 리포트)
+             ==================================================== -->
+        <div id="m-tab-timeline" class="m-tab-content">
+          <div class="tab-head-title">
+            <h3>나의 건강 기록 & 퍼스널 리포트</h3>
+            <p>자가 체크 데이터와 기간별 컨디션 변화 궤적을 통합 열람합니다.</p>
+          </div>
+
+          <!-- 주간 변화 리포트 차트 -->
+          <div class="report-chart-card">
+            <div class="card-header-flex">
+              <h4><i class="fa-solid fa-chart-line text-success"></i> 최근 7일 컨디션 및 수면 추이</h4>
+              <span class="tag-badge">퍼스널 리포트</span>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="realScoreChart" width="600" height="200"></canvas>
+            </div>
+          </div>
+
+          <!-- 타임라인 피드 -->
+          <div class="timeline-section-wrap">
+            <h4 class="mb-3"><i class="fa-solid fa-clock-rotate-left"></i> 일별 상태 체크 기록</h4>
+            <div class="timeline-feed-wrap" id="timelineFeedContainer">
+              <!-- Timeline cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ====================================================
+             TAB 3: 커뮤니티 (CM-01~04 공지, 전체 라운지, 소그룹)
+             ==================================================== -->
+        <div id="m-tab-community" class="m-tab-content">
+          <div class="tab-head-title">
+            <div class="card-header-flex">
+              <div>
+                <h3>프라이빗 웰니스 커뮤니티 (CM-01)</h3>
+                <p>회원들의 따뜻한 일상 안부와 프로그램 경험을 나누는 안전한 공간입니다.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btnOpenNewPostModal"><i class="fa-solid fa-pen"></i> 안부 글 작성</button>
+            </div>
+          </div>
+
+          <!-- 커뮤니티 카테고리 탭 -->
+          <div class="comm-sub-nav">
+            <button class="comm-filter-btn active" data-filter="all">전체 라운지</button>
+            <button class="comm-filter-btn" data-filter="notice">공식 공지</button>
+            <button class="comm-filter-btn" data-filter="group">4주 수면개선 소그룹</button>
+            <button class="comm-filter-btn" data-filter="review">체험 나눔</button>
+          </div>
+
+          <!-- 비의료 가드레일 배너 -->
+          <div class="comm-guardrail-alert">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>커뮤니티는 일상 웰니스 나눔 공간입니다. 개인 질환 진료나 약재 처방 질문은 <strong>김복선 치유사 1:1 상담</strong>을 이용해 주세요.</span>
+          </div>
+
+          <!-- 커뮤니티 피드 리스트 -->
+          <div class="comm-feed-list" id="communityFeedList">
+            <!-- Dynamic Post Cards -->
+          </div>
+        </div>
+
+        <!-- ====================================================
+             TAB 4: 건강정보 (KN-01 지식관 + KN-02 전통 원료 도감)
+             ==================================================== -->
+        <div id="m-tab-knowledge" class="m-tab-content">
+          <div class="tab-head-title">
+            <h3>건강 지식관 & 전통 원료 도감 (KN-01~04)</h3>
+            <p>전문가가 감수한 계절별 웰니스 가이드와 프리미엄 전통 원료 백과를 열람하세요.</p>
+          </div>
+
+          <!-- 건강 지식관 아티클 그리드 -->
+          <div class="knowledge-articles-section">
+            <h4 class="mb-3"><i class="fa-solid fa-newspaper text-success"></i> 이달의 웰니스 아티클</h4>
+            <div class="articles-grid">
+              <div class="article-card" onclick="alert('계절 웰니스 아티클: 환절기 자율신경 안정과 따뜻한 차 요법 전문이 열립니다.')">
+                <div class="article-thumb"><i class="fa-solid fa-mug-hot"></i></div>
+                <div class="article-body">
+                  <span class="article-tag">계절 웰니스</span>
+                  <h5>환절기 자율신경 안정과 따뜻한 차 요법</h5>
+                  <p>일교차가 큰 환절기, 체온 유지와 심신 이완을 돕는 따뜻한 전통 원료 블렌딩 가이드.</p>
+                  <small class="text-muted">검토: 리조넌스 웰니스 자문단 · 2026.09</small>
+                </div>
+              </div>
+              <div class="article-card" onclick="alert('수면 아티클: 숙면을 위한 저녁 10분 호흡 루틴 전문이 열립니다.')">
+                <div class="article-thumb"><i class="fa-solid fa-moon"></i></div>
+                <div class="article-body">
+                  <span class="article-tag">수면 리듬</span>
+                  <h5>숙면을 위한 저녁 10분 호흡 & 이완 루틴</h5>
+                  <p>잠들기 전 부교감 신경을 활성화하여 깊은 숙면 단계로 진입하는 4-7-8 호흡법.</p>
+                  <small class="text-muted">검토: 김복선 치유사 · 2026.09</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 전통 원료 도감 그리드 -->
+          <div class="herbs-dictionary-section mt-4">
+            <h4 class="mb-3"><i class="fa-solid fa-leaf text-success"></i> 전통 원료 도감 (KN-02)</h4>
+            <div class="herbs-grid" id="herbsGridContainer">
+              <!-- Dynamic Herb Cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ====================================================
+             TAB 5: MY / 혜택 지갑 (MB-15 VIP 혜택 + MY-01 회원 설정)
+             ==================================================== -->
+        <div id="m-tab-wallet" class="m-tab-content">
+          <div class="tab-head-title">
+            <h3>VIP 혜택 지갑 & 회원 센터 (MB-15)</h3>
+            <p>나의 멤버십 혜택, 케어 크레딧, 케어박스 신청, 지인 초대권을 관리합니다.</p>
+          </div>
+
+          <!-- VIP 혜택 지갑 골드 카드 -->
+          <div class="benefit-wallet-gold-card">
+            <div class="wallet-card-head">
+              <div>
+                <span class="wallet-badge"><i class="fa-solid fa-crown"></i> VIP BENEFIT WALLET</span>
+                <h3 class="mt-1" id="lblWalletUserName">김회원 님의 케어 지갑</h3>
+              </div>
+              <div class="wallet-credit-amount">
+                <small>보유 케어 크레딧</small>
+                <strong id="lblWalletCreditVal">50,000 P</strong>
+              </div>
+            </div>
+            
+            <div class="wallet-perks-row">
+              <div class="perk-col">
+                <label>시즌 케어박스</label>
+                <strong id="lblCareboxStatusText" class="text-success">신청 가능 (1회)</strong>
+              </div>
+              <div class="perk-col">
+                <label>지인 VIP 초대권</label>
+                <strong id="lblInvitePassCount">잔여 2매</strong>
+              </div>
+              <div class="perk-col">
+                <label>치유 세션 이용권</label>
+                <strong class="text-gold">잔여 4회</strong>
+              </div>
+            </div>
+
+            <div class="wallet-action-btns mt-3">
+              <button class="btn btn-primary" id="btnClaimCarebox"><i class="fa-solid fa-gift"></i> 프리미엄 케어박스 신청하기</button>
+              <button class="btn btn-outline" id="btnGenerateInvitePass"><i class="fa-solid fa-ticket"></i> 지인 초대 코드 복사</button>
+            </div>
+          </div>
+
+          <!-- 회원권 관리 & 문진 정보 -->
+          <div class="profile-summary-box mt-3">
+            <div class="card-header-flex">
+              <h4><i class="fa-solid fa-id-card"></i> 회원권 및 문진 기준선</h4>
+              <button class="btn-text" id="btnEditProfile"><i class="fa-solid fa-pen"></i> 수정</button>
             </div>
             <div class="kv-grid-3">
               <div class="kv-col">
-                <label>평소 수면 시간</label>
-                <strong id="lblProfileSleep">6~7시간 내외</strong>
+                <label>회원 등급</label>
+                <strong class="text-gold">VIP 프라이빗 회원</strong>
               </div>
               <div class="kv-col">
-                <label>집중 관리 부위</label>
-                <strong id="lblProfileAreas">목/어깨</strong>
+                <label>전담 케어</label>
+                <strong>김복선 치유사</strong>
               </div>
               <div class="kv-col">
                 <label>3개월 관리 목표</label>
-                <strong id="lblProfileGoal" class="text-success">피로감 개선</strong>
+                <strong class="text-success" id="lblMyGoal">만성 피로 완화 및 숙면</strong>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- TAB 2: TIMELINE -->
-        <div id="m-tab-timeline" class="m-tab-content">
-          <div class="tab-head-title">
-            <h3>나의 건강 타임라인</h3>
-            <p>내가 직접 작성한 상태와 파트너의 피드백이 시간 순서대로 안전하게 쌓입니다.</p>
-          </div>
-          <div class="timeline-feed-wrap" id="timelineFeedContainer">
-            <!-- Dynamic Items or Empty State -->
-          </div>
-        </div>
-
-        <!-- TAB 3: REPORT -->
-        <div id="m-tab-report" class="m-tab-content">
-          <div class="tab-head-title">
-            <h3>주간 체감 변화 리포트</h3>
-            <p>자가 기록에 나타난 내 몸과 마음의 점수 변화 추이를 확인하세요.</p>
-          </div>
-          <div class="report-chart-card">
-            <h4>최근 7일 컨디션 및 수면 추이</h4>
-            <div class="chart-canvas-container">
-              <canvas id="realScoreChart" width="600" height="220"></canvas>
+          <!-- 법적 분리 동의 및 개인정보 권리 관리 -->
+          <div class="privacy-consent-box mt-3">
+            <div class="card-header-flex">
+              <h4><i class="fa-solid fa-shield-halved"></i> 민감 건강정보 보호 및 동의 관리</h4>
+              <span class="badge-active">정상 동의중</span>
             </div>
-          </div>
-        </div>
-
-        <!-- TAB 4: PARTNER 1:1 CHAT -->
-        <div id="m-tab-chat" class="m-tab-content">
-          <div class="tab-head-title">
-            <h3>전담 케어 파트너 1:1 대화</h3>
-            <p>컨디션에 관한 질문이나 특별한 안부를 남기시면 파트너가 답변을 드립니다.</p>
-          </div>
-          <div class="chat-wrapper">
-            <div class="chat-stream" id="chatStreamBox">
-              <!-- Chat bubbles -->
-            </div>
-            <div class="chat-send-bar">
-              <input type="text" id="inputChatMsg" placeholder="파트너에게 안부 또는 상태를 남겨보세요..." maxlength="200">
-              <button class="btn btn-primary" id="btnSendChat"><i class="fa-solid fa-paper-plane"></i> 전송</button>
+            <p class="text-sm text-muted mt-2">개인정보보호법 제23조에 따라 민감 건강 데이터는 분리 보관되며, 언제든 데이터 다운로드 및 삭제를 요청하실 수 있습니다.</p>
+            <div class="consent-actions mt-3">
+              <button class="btn btn-outline btn-sm" id="btnDownloadMyData"><i class="fa-solid fa-download"></i> 내 건강 기록 일괄 다운로드</button>
             </div>
           </div>
         </div>
@@ -207,13 +371,13 @@
        MODALS
        ======================================================== -->
 
-  <!-- MODAL: DAILY CHECKIN -->
+  <!-- MODAL 1: DAILY CHECKIN (MB-12) -->
   <div class="app-modal-overlay" id="modalCheckin">
     <div class="app-modal-dialog">
       <div class="modal-header">
         <div>
           <h3><i class="fa-solid fa-heart-pulse"></i> 오늘의 상태 체크</h3>
-          <p class="modal-sub">오늘 하루의 몸과 마음 상태를 솔직하게 기록해주세요.</p>
+          <p class="modal-sub">오늘 하루의 몸과 마음 상태를 기록해주세요.</p>
         </div>
         <button class="modal-close-btn" data-close-modal="modalCheckin"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -261,13 +425,146 @@
           </div>
 
           <div class="form-group mt-3">
-            <label class="q-label">5. 파트너에게 전하고 싶은 한마디 (최대 500자)</label>
+            <label class="q-label">5. 김복선 치유사에게 전하고 싶은 한마디</label>
             <textarea id="txtCheckinMemo" class="form-textarea" rows="3" placeholder="예: 오늘 어깨가 약간 뻐근하네요." maxlength="500"></textarea>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" data-close-modal="modalCheckin">취소</button>
-          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> 체크인 등록 및 파트너 전송</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> 체크인 등록 및 치유사 전송</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: 1:1 CHAT (김복선 치유사) -->
+  <div class="app-modal-overlay" id="modalDirectChat">
+    <div class="app-modal-dialog" style="max-width: 580px;">
+      <div class="modal-header">
+        <div>
+          <h3><i class="fa-solid fa-comments text-primary"></i> 김복선 치유사 1:1 상담</h3>
+          <p class="modal-sub">컨디션과 생활 습관에 관해 편안하게 상담하세요.</p>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalDirectChat"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div class="chat-wrapper" style="height: 380px; border: none; padding: 0;">
+          <div class="chat-stream" id="chatStreamBox">
+            <!-- Messages -->
+          </div>
+          <div class="chat-send-bar">
+            <input type="text" id="inputChatMsg" placeholder="치유사님께 메시지를 남겨보세요..." maxlength="200">
+            <button class="btn btn-primary" id="btnSendChat"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: HERB DETAIL (전통 원료 상세 모달) -->
+  <div class="app-modal-overlay" id="modalHerbDetail">
+    <div class="app-modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 id="herbModalTitle">당귀 (當歸)</h3>
+          <p class="modal-sub" id="herbModalCategory">전통 보혈 및 순환 원료</p>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalHerbDetail"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="herb-detail-content">
+          <div class="herb-modal-tag-row" id="herbModalTags">
+            <span class="tag-badge">성미: 따뜻함(溫)</span>
+            <span class="tag-badge">혈액 순환</span>
+            <span class="tag-badge">여성 웰니스</span>
+          </div>
+          <h4 class="mt-3">원료 유래 및 웰니스 특징</h4>
+          <p id="herbModalDesc" class="text-muted mt-1 leading-relaxed">
+            '마땅히 제자리로 돌아온다'는 뜻을 지닌 대표적인 전통 원료로, 혈액 순환을 돕고 몸을 따뜻하게 북돋우는 데 도움을 줍니다.
+          </p>
+          <div class="herb-caution-box mt-3">
+            <strong><i class="fa-solid fa-triangle-exclamation text-gold"></i> 섭취 및 음용 시 주의사항</strong>
+            <p id="herbModalCaution" class="text-sm mt-1">몸에 열이 많거나 급성 소화불량이 있을 때는 전문가 상담 후 음용하시기 바랍니다.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-close-modal="modalHerbDetail">확인 완료</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: COMMUNITY POST (커뮤니티 안부 글 작성) -->
+  <div class="app-modal-overlay" id="modalNewPost">
+    <div class="app-modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3><i class="fa-solid fa-pen"></i> 커뮤니티 안부 글 작성</h3>
+          <p class="modal-sub">회원들과 나누고 싶은 웰니스 일상이나 경험을 남겨주세요.</p>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalNewPost"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="formNewPost">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>카테고리 선택</label>
+            <select class="form-input" id="postCategorySelect">
+              <option value="lounge">전체 라운지 (일상 안부)</option>
+              <option value="group">4주 수면개선 소그룹</option>
+              <option value="review">세션/케어박스 체험 후기</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>내용</label>
+            <textarea id="txtPostContent" class="form-textarea" rows="4" placeholder="오늘 실천한 웰니스 습관이나 느낀 점을 자유롭게 공유해 보세요." required></textarea>
+          </div>
+          <div class="comm-guardrail-alert text-xs">
+            <i class="fa-solid fa-shield-halved"></i> 개인 질환이나 민감 진단 질문은 치유사 1:1 상담을 이용해 주세요.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal="modalNewPost">취소</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> 게시글 등록</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: CAREBOX CLAIM (케어박스 신청) -->
+  <div class="app-modal-overlay" id="modalCarebox">
+    <div class="app-modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3><i class="fa-solid fa-gift text-gold"></i> 시즌 프리미엄 케어박스 신청</h3>
+          <p class="modal-sub">VIP 회원님을 위한 계절 맞춤 전통 원료 웰니스 패키지 배송</p>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalCarebox"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="formCarebox">
+        <div class="modal-body">
+          <div class="carebox-preview-banner">
+            <i class="fa-solid fa-box-open"></i>
+            <div>
+              <strong>2026 가을 리조넌스 웰니스 케어박스</strong>
+              <small class="text-muted block">구성: 유기농 당귀 침출차, 황기 릴랙스 밤, 힐링 아로마 필로우 미스트</small>
+            </div>
+          </div>
+          <div class="form-group mt-3">
+            <label>수령인 성명</label>
+            <input type="text" class="form-input" id="careboxRecipientName" required>
+          </div>
+          <div class="form-group">
+            <label>연락처</label>
+            <input type="tel" class="form-input" id="careboxRecipientPhone" required>
+          </div>
+          <div class="form-group">
+            <label>배송지 주소</label>
+            <input type="text" class="form-input" id="careboxRecipientAddress" placeholder="도로명 주소 및 상세주소 입력" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal="modalCarebox">취소</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> 케어박스 무료 신청 완료</button>
         </div>
       </form>
     </div>
@@ -300,7 +597,7 @@
           <div class="checkbox-group mt-2">
             <label class="custom-checkbox-label">
               <input type="checkbox" id="joinAgreeAll" required checked>
-              <span>[필수] 서비스 이용약관 및 민감 건강정보 처리 위탁에 모두 동의합니다.</span>
+              <span>[필수] 서비스 이용약관 및 민감 건강정보 분리 처리 위탁에 모두 동의합니다.</span>
             </label>
           </div>
         </div>
@@ -341,7 +638,7 @@
     </div>
   </div>
 
-  <!-- Toast Notification Container -->
+  <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="app.js"></script>

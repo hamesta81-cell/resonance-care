@@ -433,6 +433,60 @@
               <!-- Dynamic Herb Cards -->
             </div>
           </div>
+
+          <!-- ====================================================
+               NEW: 한의학적 경락 & 6대 혈자리 자가 지압관 (KN-03)
+               ==================================================== -->
+          <div class="acupoints-meridian-section mt-5">
+            <div class="section-head-flex mb-3">
+              <div>
+                <span class="badge-gold"><i class="fa-solid fa-hands-holding"></i> MERIDIAN & ACUPOINTS</span>
+                <h4 class="text-xl font-bold mt-1"><i class="fa-solid fa-circle-dot text-gold"></i> 한의학적 경락 & 6대 힐링 혈자리 도감</h4>
+                <p class="text-muted text-xs">우리 몸의 12경락과 기혈(氣血)의 흐름을 깨우는 데일리 1분 자가 지압 테라피</p>
+              </div>
+            </div>
+
+            <!-- 한의학 기혈(氣血) 4대 순환 상태 가이드 -->
+            <div class="meridian-qi-balance-grid mb-4">
+              <div class="qi-card">
+                <div class="qi-icon"><i class="fa-solid fa-wind"></i></div>
+                <div>
+                  <strong>기허 (氣虛)</strong>
+                  <p>기운이 없고 쉽게 피로한 상태</p>
+                  <span class="qi-cure-tag">황기차 · 족삼리 지압</span>
+                </div>
+              </div>
+              <div class="qi-card">
+                <div class="qi-icon"><i class="fa-solid fa-droplet"></i></div>
+                <div>
+                  <strong>혈허 (血虛)</strong>
+                  <p>손발이 차고 안색이 창백한 상태</p>
+                  <span class="qi-cure-tag">당귀차 · 삼음교 지압</span>
+                </div>
+              </div>
+              <div class="qi-card">
+                <div class="qi-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                <div>
+                  <strong>기체 (氣滯)</strong>
+                  <p>스트레스와 가슴 답답함 울체</p>
+                  <span class="qi-cure-tag">박하차 · 태충/내관 지압</span>
+                </div>
+              </div>
+              <div class="qi-card">
+                <div class="qi-icon"><i class="fa-solid fa-water"></i></div>
+                <div>
+                  <strong>담음 (痰飮)</strong>
+                  <p>몸이 무겁고 부종이 잦은 상태</p>
+                  <span class="qi-cure-tag">생강차 · 풍륭/용천 지압</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6대 핵심 혈자리 인터랙티브 카드 그리드 -->
+            <div class="acupoints-grid" id="acupointsGridContainer">
+              <!-- Dynamic Acupoint Cards rendered by app.js -->
+            </div>
+          </div>
         </div>
 
         <!-- ====================================================
@@ -1112,12 +1166,46 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-primary btn-sm" data-close-modal="modalAdminMemberDetail">확인 완료</button>
       </div>
+  <!-- MODAL: ACUPOINT DETAIL (혈자리 상세 지압 가이드) -->
+  <div class="app-modal-overlay" id="modalAcupointDetail">
+    <div class="app-modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 id="acupointModalTitle"><i class="fa-solid fa-hands-holding text-gold"></i> 혈자리 상세 지압 가이드</h3>
+          <p class="modal-sub" id="acupointModalMeridian">12경락 기혈 순환 힐링 테라피</p>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalAcupointDetail"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="carebox-preview-banner mb-3" style="background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.35);">
+          <i class="fa-solid fa-location-dot text-gold"></i>
+          <div>
+            <strong>정확한 위치</strong>
+            <p class="text-sm mt-1 text-sub" id="acupointModalLocation">혈자리 위치 설명</p>
+          </div>
+        </div>
+
+        <h4 class="text-sm font-bold mb-2"><i class="fa-solid fa-sparkles text-gold"></i> 주요 치유 효능</h4>
+        <p class="text-sm text-sub mb-3" id="acupointModalEffects">주요 효능 내용</p>
+
+        <h4 class="text-sm font-bold mb-2"><i class="fa-solid fa-hand-pointer text-primary"></i> 1분 자가 지압 테라피 방법</h4>
+        <div class="acupoint-method-box p-3 bg-surface rounded-md border border-color mb-3" id="acupointModalMethod">
+          <!-- Method items -->
+        </div>
+
+        <div class="comm-guardrail-alert text-xs">
+          <i class="fa-solid fa-shield-halved"></i> <strong>치유사 팁:</strong> 식후 30분 이후 편안한 호흡과 함께 엄지손가락으로 3초간 지그시 누르고 2초 쉬는 리듬으로 10회 반복하세요.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm" data-close-modal="modalAcupointDetail">지압 완료 & 닫기</button>
+      </div>
     </div>
   </div>
 
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <script src="app.js?v=20260902_masterpiece"></script>
+  <script src="app.js?v=20260902_masterpiece_acupoints"></script>
 </body>
 </html>

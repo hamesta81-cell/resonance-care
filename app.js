@@ -951,7 +951,10 @@
       
       if (target === 'm-tab-timeline') renderReportChart();
       if (target === 'm-tab-community') renderCommunityFeed();
-      if (target === 'm-tab-knowledge') renderHerbsDictionary();
+      if (target === 'm-tab-knowledge') {
+        renderHerbsDictionary();
+        renderAcupoints();
+      }
     });
   });
 
@@ -1004,6 +1007,7 @@
     renderCarePlanTasks();
     renderTimeline();
     renderHerbsDictionary();
+    renderAcupoints();
   }
 
   function renderTimeline() {
@@ -1121,8 +1125,130 @@
   }
 
   // ==========================================
-  // SUPABASE CONFIG MODAL & MANUAL SYNC
+  // MERIDIAN & ACUPOINTS SANCTUARY LOGIC (KN-03)
   // ==========================================
+  const ACUPOINTS_DATA = [
+    {
+      id: 'acu_1',
+      name: '합곡혈',
+      hanja: '合谷穴',
+      meridian: '수양명대장경 (LI4)',
+      location: '엄지손가락과 둘째손가락 사이의 뼈가 만나는 V자 오목한 곳',
+      effects: '체기 및 소화불량 즉각 완화, 긴장성 두통, 눈 피로, 얼굴 부종 및 전신 기혈 순환 촉진',
+      method: [
+        '1. 반대쪽 엄지손가락으로 뼈 안쪽을 향해 45도 각도로 깊숙이 댑니다.',
+        '2. 숨을 천천히 내쉬며 3~5초간 묵직한 자극이 느껴지도록 지그시 누릅니다.',
+        '3. 숨을 들이마시며 2초간 힘을 빼고, 양손 각각 10회씩 반복합니다.'
+      ]
+    },
+    {
+      id: 'acu_2',
+      name: '내관혈',
+      hanja: '內關穴',
+      meridian: '수궐음심포경 (PC6)',
+      location: '손바닥 안쪽 손목 주름 정중앙에서 팔꿈치 쪽으로 손가락 2마디(약 4~5cm) 위, 두 힘줄 사이',
+      effects: '가슴 답답함, 심리적 불안 및 스트레스 완화, 불면증 해소, 멀미·입덧·소화기 구토 완화',
+      method: [
+        '1. 엄지손가락 끝으로 두 힘줄 사이의 오목한 부위를 수직으로 누릅니다.',
+        '2. 가슴의 긴장을 풀며 4초간 깊게 숨을 들이쉬고, 누른 상태로 4초간 천천히 내쉽니다.',
+        '3. 잠들기 전 1분간 양쪽 손목을 번갈아 지압하면 깊은 숙면에 도움을 줍니다.'
+      ]
+    },
+    {
+      id: 'acu_3',
+      name: '족삼리',
+      hanja: '足三里',
+      meridian: '족양명위경 (ST36)',
+      location: '무릎뼈 바깥쪽 아래 오목한 곳에서 손가락 4마디(약 3치) 아래, 정강이뼈 바깥쪽 근육 부위',
+      effects: '전신 원기(元氣) 회복, 소화 흡수력 강화, 면역력 증진, 만성 피로 및 하체 무거움 해소',
+      method: [
+        '1. 의자에 편안히 앉아 엄지손가락이나 주먹으로 묵직하게 원을 그리며 누릅니다.',
+        '2. 3초간 지그시 누르고 2초 쉬며 정강이 쪽으로 찌릿한 온기가 퍼지도록 자극합니다.',
+        '3. 아침 기상 후 1분간 지압하면 하루의 활력을 깨우는 최고의 보양 혈자리입니다.'
+      ]
+    },
+    {
+      id: 'acu_4',
+      name: '용천혈',
+      hanja: '湧泉穴',
+      meridian: '족소음신경 (KI1)',
+      location: '발바닥을 오므렸을 때 가장 깊게 들어가는 중앙 상단 1/3 지점 (사람 인 \'ㅅ\'자 홈)',
+      effects: '신장(腎) 기운 보양, 하지 부종 및 냉증 완화, 두통·상열감 완화, 깊은 숙면 유도',
+      method: [
+        '1. 양손 엄지손가락을 겹쳐 발바닥의 가장 깊은 홈을 강하게 밀어 올리듯 누릅니다.',
+        '2. 따뜻한 온수 족욕 후 지압하거나, 골프공을 바닥에 두고 1분간 굴려주면 더욱 효과적입니다.',
+        '3. 하루의 피로가 하체로 쏠려 발이 무겁고 잠이 안 올 때 즉각적인 안정을 줍니다.'
+      ]
+    },
+    {
+      id: 'acu_5',
+      name: '풍지혈',
+      hanja: '風池穴',
+      meridian: '족소양담경 (GB20)',
+      location: '뒷머리 뼈 아래, 목 뒤 양쪽 굵은 근육의 바깥쪽 오목하게 쏙 들어간 곳',
+      effects: '목·어깨 만성 결림 해소, 뇌 혈류 개선으로 머리 맑아짐, 눈의 피로 및 안압 안정, 감기 기운 완화',
+      method: [
+        '1. 양손으로 머리를 감싸고 엄지손가락으로 뒷목의 오목한 부위를 위쪽(이마 방향)으로 밀어 올립니다.',
+        '2. 머리를 살짝 뒤로 젖히며 5초간 지그시 압박 후 천천히 힘을 뺍니다.',
+        '3. 모니터나 스마트폰을 오래 본 후 10회 반복하면 즉시 시야가 맑아집니다.'
+      ]
+    },
+    {
+      id: 'acu_6',
+      name: '태충혈',
+      hanja: '太衝穴',
+      meridian: '족궐음간경 (LR3)',
+      location: '엄지발가락과 둘째발가락 사이의 뼈가 만나는 지점 바로 앞 오목한 곳',
+      effects: '간(肝)의 열기 해독, 스트레스성 홧병 및 긴장 완화, 혈압 안정, 근육 경련 및 생리통 완화',
+      method: [
+        '1. 엄지손가락으로 발가락 사이 뼈를 따라 쓸어 올리다가 뼈에 걸려 멈추는 곳을 찾습니다.',
+        '2. 숨을 내쉬며 3초간 묵직한 통증이 기분 좋게 느껴질 정도로 누릅니다.',
+        '3. 합곡혈과 함께 지압하면 한의학에서 말하는 사관(四關)이 열려 전신 기혈이 막힘없이 통합니다.'
+      ]
+    }
+  ];
+
+  function renderAcupoints() {
+    const container = document.getElementById('acupointsGridContainer');
+    if (!container) return;
+
+    container.innerHTML = ACUPOINTS_DATA.map(acu => `
+      <div class="acupoint-card" onclick="window.openAcupointModal('${acu.id}')">
+        <div>
+          <div class="acupoint-head">
+            <div class="acupoint-name">${acu.name} <span class="acupoint-hanja">(${acu.hanja})</span></div>
+            <span class="acupoint-meridian-badge">${acu.meridian.split(' ')[0]}</span>
+          </div>
+          <p class="acupoint-location"><i class="fa-solid fa-location-dot text-gold"></i> ${acu.location}</p>
+          <div class="acupoint-effect-tag"><i class="fa-solid fa-sparkles text-primary"></i> ${acu.effects.split(',')[0]}...</div>
+        </div>
+        <div class="acupoint-action-link">
+          <span>1분 자가 지압 가이드</span> <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.openAcupointModal = function(acuId) {
+    const acu = ACUPOINTS_DATA.find(a => a.id === acuId);
+    if (!acu) return;
+
+    const title = document.getElementById('acupointModalTitle');
+    const meridian = document.getElementById('acupointModalMeridian');
+    const loc = document.getElementById('acupointModalLocation');
+    const effects = document.getElementById('acupointModalEffects');
+    const method = document.getElementById('acupointModalMethod');
+
+    if (title) title.innerHTML = `<i class="fa-solid fa-hands-holding text-gold"></i> ${acu.name} (${acu.hanja})`;
+    if (meridian) meridian.textContent = `소속 경락: ${acu.meridian} · 김복선 치유사 감수`;
+    if (loc) loc.textContent = acu.location;
+    if (effects) effects.textContent = acu.effects;
+    if (method) {
+      method.innerHTML = acu.method.map(m => `<p class="text-xs text-sub mb-1 leading-relaxed">${m}</p>`).join('');
+    }
+
+    openModal('modalAcupointDetail');
+  };
   document.getElementById('btnOpenSupabaseModal')?.addEventListener('click', () => {
     const configStr = localStorage.getItem(SUPABASE_CONFIG_KEY);
     if (configStr) {

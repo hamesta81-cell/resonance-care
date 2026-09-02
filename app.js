@@ -12,15 +12,23 @@
   const DATA_KEY_PREFIX = 'resonance_v2_data_';
   const SUPABASE_CONFIG_KEY = 'resonance_supabase_config';
 
+  // Default Auto-Connected Supabase Project
+  const DEFAULT_SUPABASE_CONFIG = {
+    url: 'https://tdetsnkdclgaktsoiujq.supabase.co',
+    key: 'sb_publishable_jvZZbSYP7NPomropNjHiug_cJMTcUw2'
+  };
+
   // Supabase Client Helper
   function getSupabaseClient() {
     try {
+      let config = DEFAULT_SUPABASE_CONFIG;
       const configStr = localStorage.getItem(SUPABASE_CONFIG_KEY);
-      if (configStr && window.supabase) {
-        const config = JSON.parse(configStr);
-        if (config.url && config.key) {
-          return window.supabase.createClient(config.url, config.key);
-        }
+      if (configStr) {
+        const custom = JSON.parse(configStr);
+        if (custom.url && custom.key) config = custom;
+      }
+      if (config.url && config.key && window.supabase) {
+        return window.supabase.createClient(config.url, config.key);
       }
     } catch(e) {}
     return null;

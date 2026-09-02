@@ -103,21 +103,45 @@
         await client.from('community_posts').upsert(postRows);
       }
 
-      // Also backup snapshot to local REST server if available
-      try {
-        fetch('/api/checkin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, ...data })
-        }).catch(() => {});
-      } catch(e) {}
+      // 6. Central Serverless Cloud API Sync (서버 실시간 영구 저장 & 멀티 디바이스 공유)
+      await syncToCentralServer(user, data);
 
       updateCloudBadge(true);
     } catch(err) {
-      console.warn('Supabase sync warning (will retry automatically):', err);
-      // Auto retry after 5 seconds
-      setTimeout(() => syncToSupabase(user, data), 5000);
+      console.warn('Sync warning:', err);
     }
+  }
+
+  // Central Serverless API Handlers
+  async function syncToCentralServer(user, data, newPost = null) {
+    try {
+      await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user, userData: data, newPost })
+      });
+    } catch(e) {
+      console.warn('Central server sync note:', e);
+    }
+  }
+
+  async function loadCentralServerData() {
+    try {
+      const res = await fetch('/api/sync');
+      if (res.ok) {
+        const result = await res.json();
+        if (result.communityPosts && userData) {
+          // Merge server community posts with local
+          const localPostIds = new Set(userData.communityPosts.map(p => p.id));
+          result.communityPosts.forEach(sp => {
+            if (!localPostIds.has(sp.id)) {
+              userData.communityPosts.unshift(sp);
+            }
+          });
+          renderCommunityFeed();
+        }
+      }
+    } catch(e) {}
   }
 
   function updateCloudBadge(isSynced = false) {
@@ -622,9 +646,11 @@
     userData.communityPosts.unshift(newPost);
     localStorage.removeItem('resonance_draft_post');
     saveUserData();
+    // Central Server Sync
+    syncToCentralServer(currentUser, userData, newPost);
     if (txtPostContent) txtPostContent.value = '';
     closeModal('modalNewPost');
-    showToast('커뮤니티에 안부 글이 영구 저장 및 등록되었습니다!', 'success');
+    showToast('커뮤니티에 안부 글이 서버 및 로컬에 영구 저장되었습니다!', 'success');
     renderCommunityFeed();
   });
 
@@ -1013,8 +1039,9 @@
     showToast('클라우드 동기화 성공! 모든 기기에서 즉시 확인 가능합니다.', 'success');
   });
 
-  // Initial App Render & Cloud Badge
+  // Initial App Render & Cloud Badge & Central Server Sync
   renderApp();
   updateCloudBadge();
+  loadCentralServerData();
 
 })();

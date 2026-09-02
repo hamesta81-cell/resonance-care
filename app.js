@@ -518,10 +518,8 @@
   });
 
   document.getElementById('btnNavLogout')?.addEventListener('click', () => {
-    if (confirm('로그아웃 하시겠습니까?')) {
-      saveAuth(null);
-      showToast('안전하게 로그아웃되었습니다.', 'info');
-    }
+    saveAuth(null);
+    showToast('안전하게 로그아웃되었습니다.', 'info');
   });
 
   // Nav Buttons
@@ -530,11 +528,8 @@
   document.getElementById('btnHeroJoin')?.addEventListener('click', () => openModal('modalJoin'));
   document.getElementById('btnHeroLogin')?.addEventListener('click', () => openModal('modalLogin'));
   document.getElementById('btnGoHome')?.addEventListener('click', () => {
-    if (currentUser) {
-      document.querySelector('[data-target="m-tab-today"]')?.click();
-    } else {
-      renderApp();
-    }
+    showPage('page-public');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   // ==========================================

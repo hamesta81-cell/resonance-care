@@ -1,12 +1,101 @@
 /**
- * RESONANCE CARE V2 - PRODUCTION OFFICIAL LOGIC
- * Comprehensive implementation of V2 Specification:
- * MB-12 Care Briefing, MB-13 7-Day Care Plan, MB-14 Sessions,
- * MB-15 VIP Wallet & Carebox, CM-01 Community, KN-01 Knowledge & Herbs
+ * RESONANCE CARE V2 - MASTERPIECE LUXURY LOGIC
+ * Includes Interactive Stardust Particle Engine, Central Server Sync,
+ * Supabase Cloud PostgreSQL, Google Stitch Ultra-Luxury Integration.
  */
 
 (function() {
   'use strict';
+
+  // ==========================================
+  // INTERACTIVE AMBIENT LUXURY CANVAS ENGINE
+  // ==========================================
+  function initAmbientLuxuryCanvas() {
+    const canvas = document.getElementById('ambientLuxuryCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const particleCount = 45;
+    const colors = ['rgba(245, 158, 11, ', 'rgba(16, 185, 129, ', 'rgba(139, 92, 246, '];
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 2 + 0.8,
+        colorBase: colors[Math.floor(Math.random() * colors.length)],
+        alpha: Math.random() * 0.5 + 0.2,
+        speedX: (Math.random() - 0.5) * 0.35,
+        speedY: (Math.random() - 0.5) * 0.35,
+        pulseSpeed: Math.random() * 0.02 + 0.005,
+        pulseAngle: Math.random() * Math.PI * 2
+      });
+    }
+
+    let mouse = { x: -1000, y: -1000 };
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    function renderParticles() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Deep space radial mesh
+      const bgGrad1 = ctx.createRadialGradient(width * 0.2, height * 0.15, 50, width * 0.2, height * 0.15, 600);
+      bgGrad1.addColorStop(0, 'rgba(139, 92, 246, 0.12)');
+      bgGrad1.addColorStop(1, 'transparent');
+      ctx.fillStyle = bgGrad1;
+      ctx.fillRect(0, 0, width, height);
+
+      const bgGrad2 = ctx.createRadialGradient(width * 0.8, height * 0.3, 50, width * 0.8, height * 0.3, 550);
+      bgGrad2.addColorStop(0, 'rgba(16, 185, 129, 0.09)');
+      bgGrad2.addColorStop(1, 'transparent');
+      ctx.fillStyle = bgGrad2;
+      ctx.fillRect(0, 0, width, height);
+
+      // Render stardust
+      particles.forEach((p) => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.pulseAngle += p.pulseSpeed;
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        // Subtle mouse repulsion / attraction
+        const dx = mouse.x - p.x;
+        const dy = mouse.y - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          p.x -= (dx / dist) * 0.8;
+          p.y -= (dy / dist) * 0.8;
+        }
+
+        const currentAlpha = Math.max(0.1, p.alpha + Math.sin(p.pulseAngle) * 0.25);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.colorBase + currentAlpha + ')';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.colorBase + '0.8)';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      requestAnimationFrame(renderParticles);
+    }
+    renderParticles();
+  }
 
   const AUTH_KEY = 'resonance_auth_user_v2';
   const DATA_KEY_PREFIX = 'resonance_v2_data_';
@@ -1396,7 +1485,8 @@
     showToast('회원 명단 및 최신 건강 상태를 갱신하였습니다.', 'info');
   });
 
-  // Initial App Render & Cloud Badge & Central Server Sync
+  // Initial App Render & Cloud Badge & Central Server Sync & Luxury Canvas
+  initAmbientLuxuryCanvas();
   renderApp();
   updateCloudBadge();
   loadCentralServerData();

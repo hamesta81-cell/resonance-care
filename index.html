@@ -29,6 +29,11 @@
     </div>
     
     <div class="header-right">
+      <!-- Admin Console Button -->
+      <button class="btn btn-outline btn-sm admin-nav-btn" id="btnNavAdmin" title="관리자/치유사 전용 콘솔">
+        <i class="fa-solid fa-user-shield"></i> <span id="lblNavAdminText">관리자 콘솔</span>
+      </button>
+
       <!-- Supabase Cloud Sync Status Badge -->
       <button class="btn btn-outline btn-sm cloud-sync-btn" id="btnOpenSupabaseModal" title="Supabase 클라우드 DB 동기화 설정">
         <i class="fa-solid fa-cloud" id="iconCloudSync"></i> <span id="lblCloudSyncStatus">클라우드 동기화</span>
@@ -382,6 +387,197 @@
       </div>
     </section>
 
+    <!-- ========================================================
+         PAGE 3: ADMIN & HEALER MASTER CONSOLE (AD-01~04, CP-01~04)
+         ======================================================== -->
+    <section id="page-admin" class="app-page">
+      <div class="admin-app-container">
+        
+        <!-- Admin Console Header -->
+        <div class="admin-header-card">
+          <div class="admin-header-info">
+            <span class="admin-shield-icon"><i class="fa-solid fa-shield-halved"></i></span>
+            <div>
+              <h2>리조넌스 케어 V2 관리자 & 치유사 통합 콘솔</h2>
+              <p class="text-muted text-sm">전담 치유사: 김복선 치유사 모드 가동중 · 전체 회원 건강 및 VIP 혜택 실시간 통합 관리</p>
+            </div>
+          </div>
+          <div class="admin-header-actions">
+            <button class="btn btn-outline btn-sm" id="btnAdminExit"><i class="fa-solid fa-arrow-right-from-bracket"></i> 콘솔 나가기</button>
+          </div>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="admin-kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon text-primary"><i class="fa-solid fa-users"></i></div>
+            <div class="kpi-info">
+              <small>총 등록 VIP 회원</small>
+              <strong id="kpiTotalMembers">3명</strong>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon text-success"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div class="kpi-info">
+              <small>오늘 상태 체크 완료</small>
+              <strong id="kpiTodayCheckins">2명 (67%)</strong>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon text-gold"><i class="fa-solid fa-list-check"></i></div>
+            <div class="kpi-info">
+              <small>7일 케어 플랜 실천</small>
+              <strong id="kpiPlanCompliance">82%</strong>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon text-danger"><i class="fa-solid fa-gift"></i></div>
+            <div class="kpi-info">
+              <small>케어박스 신청 대기</small>
+              <strong id="kpiCareboxPending">1건</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Sub-Navigation Tabs -->
+        <div class="admin-tab-nav">
+          <button class="admin-tab-btn active" data-admin-tab="adm-members"><i class="fa-solid fa-users-gear"></i> 전체 회원 관리 (AD-02)</button>
+          <button class="admin-tab-btn" data-admin-tab="adm-rounding"><i class="fa-solid fa-stethoscope"></i> 김복선 치유사 라운딩 큐 (CP-01)</button>
+          <button class="admin-tab-btn" data-admin-tab="adm-invites"><i class="fa-solid fa-ticket"></i> VIP 초대권 발급 (AD-03)</button>
+          <button class="admin-tab-btn" data-admin-tab="adm-settings"><i class="fa-solid fa-sliders"></i> 공지 & 생중계 설정 (AD-04)</button>
+        </div>
+
+        <!-- 1. TAB: MEMBERS MANAGEMENT -->
+        <div id="adm-members" class="admin-tab-content active">
+          <div class="admin-panel-card">
+            <div class="panel-header-flex">
+              <div>
+                <h3><i class="fa-solid fa-user-group text-primary"></i> VIP 회원 명단 및 건강 상태</h3>
+                <small class="text-muted">실시간 중앙 서버에 동기화된 회원 목록과 데일리 컨디션</small>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btnRefreshAdminMembers"><i class="fa-solid fa-rotate"></i> 새로고침</button>
+            </div>
+            <div class="admin-table-responsive mt-3">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>회원 성명</th>
+                    <th>연락처</th>
+                    <th>초대 코드</th>
+                    <th>전담 치유사</th>
+                    <th>오늘 컨디션</th>
+                    <th>최근 상태 체크</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody id="adminMembersTableBody">
+                  <!-- Generated Dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. TAB: HEALER ROUNDING QUEUE (CP-01) -->
+        <div id="adm-rounding" class="admin-tab-content">
+          <div class="admin-panel-card">
+            <div class="panel-header-flex">
+              <div>
+                <h3><i class="fa-solid fa-clipboard-check text-success"></i> 오늘의 치유사 라운딩 & 데일리 브리핑</h3>
+                <small class="text-muted">회원들이 오늘 제출한 1분 상태 체크 메모를 확인하고 즉시 피드백을 전달합니다.</small>
+              </div>
+            </div>
+            <div class="rounding-queue-list mt-3" id="adminRoundingQueueList">
+              <!-- Rounding Queue Cards Dynamically Generated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. TAB: INVITE PASS GENERATOR (AD-03) -->
+        <div id="adm-invites" class="admin-tab-content">
+          <div class="admin-panel-card">
+            <div class="panel-header-flex">
+              <div>
+                <h3><i class="fa-solid fa-key text-gold"></i> VIP 프라이빗 초대 코드 공식 발급기</h3>
+                <small class="text-muted">신규 VIP 회원을 위한 고유 초대 코드를 생성하고 발급 내역을 관리합니다.</small>
+              </div>
+            </div>
+            <div class="invite-generator-box mt-3">
+              <div class="form-row-flex">
+                <div class="form-group flex-1">
+                  <label>발급 대상자 성명 (선택)</label>
+                  <input type="text" class="form-input" id="inputAdminInviteTarget" placeholder="예: 홍길동 회원">
+                </div>
+                <div class="form-group flex-1">
+                  <label>전담 치유사 배정</label>
+                  <input type="text" class="form-input" id="inputAdminInvitePartner" value="김복선 치유사" readonly>
+                </div>
+                <div class="form-group align-end">
+                  <button class="btn btn-primary" id="btnAdminCreateInviteCode"><i class="fa-solid fa-plus"></i> 새 초대 코드 발급</button>
+                </div>
+              </div>
+            </div>
+
+            <h4 class="mt-4 mb-2"><i class="fa-solid fa-list-ol"></i> 발급된 VIP 초대 코드 목록</h4>
+            <div class="admin-table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>초대 코드</th>
+                    <th>발급 대상</th>
+                    <th>배정 치유사</th>
+                    <th>상태</th>
+                    <th>복사</th>
+                  </tr>
+                </thead>
+                <tbody id="adminInvitesTableBody">
+                  <tr>
+                    <td><code>RC-2026-VIP</code></td>
+                    <td>공식 마스터 초대권</td>
+                    <td>김복선 치유사</td>
+                    <td><span class="badge-active">무제한 활성</span></td>
+                    <td><button class="btn btn-outline btn-xs" onclick="navigator.clipboard.writeText('RC-2026-VIP'); alert('RC-2026-VIP 코드가 복사되었습니다.');"><i class="fa-solid fa-copy"></i> 복사</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. TAB: NOTICES & LIVE STREAM SETTINGS (AD-04) -->
+        <div id="adm-settings" class="admin-tab-content">
+          <div class="admin-panel-card">
+            <div class="panel-header-flex">
+              <div>
+                <h3><i class="fa-brands fa-youtube text-danger"></i> 공식 웰니스 공지 및 유튜브 생중계 관리</h3>
+                <small class="text-muted">전체 회원 공지사항 등록 및 실시간 라이브 스트리밍 URL 변경</small>
+              </div>
+            </div>
+            
+            <form id="formAdminOfficialNotice" class="mt-3">
+              <div class="form-group">
+                <label>새 공식 웰니스 공지사항 작성 (김복선 치유사 명의)</label>
+                <textarea class="form-textarea" id="inputAdminNoticeContent" rows="3" placeholder="회원들에게 전달할 공식 웰니스 공지 또는 계절 건강 조언을 작성하세요." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-bullhorn"></i> 공식 공지 즉시 등록</button>
+            </form>
+
+            <hr class="panel-divider my-4">
+
+            <div class="form-group">
+              <label>유튜브 생중계 라이브 스트림 URL</label>
+              <div style="display:flex; gap:10px;">
+                <input type="url" class="form-input" id="inputAdminYoutubeUrl" value="https://www.youtube.com/@Resonance2026-e7c">
+                <button class="btn btn-youtube btn-sm" id="btnAdminSaveYoutubeUrl"><i class="fa-solid fa-check"></i> 생중계 주소 즉시 반영</button>
+              </div>
+              <small class="text-muted mt-1 block">현재 연결 채널: Re;sonance2026 (@Resonance2026-e7c)</small>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
 
   <!-- ========================================================
@@ -725,6 +921,67 @@
       <div class="modal-footer">
         <a href="https://www.youtube.com" target="_blank" class="btn btn-youtube btn-sm" id="btnOpenYoutubeExternal"><i class="fa-brands fa-youtube"></i> 유튜브 앱/새창에서 열기</a>
         <button type="button" class="btn btn-primary btn-sm" data-close-modal="modalYoutubeLive">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADMIN AUTHENTICATION -->
+  <div class="app-modal-overlay" id="modalAdminAuth">
+    <div class="app-modal-dialog" style="max-width: 440px;">
+      <div class="modal-header">
+        <div>
+          <h3><i class="fa-solid fa-user-shield text-primary"></i> 관리자 & 치유사 콘솔 로그인</h3>
+          <p class="modal-sub">통합 운영을 위한 마스터 보안 인증</p>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalAdminAuth"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="formAdminAuth">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>관리자 비밀번호</label>
+            <input type="password" class="form-input" id="inputAdminPassword" placeholder="기본 비밀번호: admin1234" required autofocus>
+          </div>
+          <p class="text-xs text-muted"><i class="fa-solid fa-circle-info"></i> 초기 마스터 비밀번호: <code>admin1234</code></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal="modalAdminAuth">취소</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-key"></i> 콘솔 입장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADMIN MEMBER DETAIL (AD-02) -->
+  <div class="app-modal-overlay" id="modalAdminMemberDetail">
+    <div class="app-modal-dialog" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <h3 id="admModalMemberName"><i class="fa-solid fa-user-check text-primary"></i> 회원 상세 웰니스 차트</h3>
+          <p class="modal-sub" id="admModalMemberMeta">VIP 프라이빗 회원 · 김복선 치유사 전담</p>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalAdminMemberDetail"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="carebox-preview-banner mb-3">
+          <i class="fa-solid fa-notes-medical text-primary"></i>
+          <div>
+            <strong>7일 케어 플랜 실천 현황 & 컨디션 추이</strong>
+            <small class="text-muted block" id="admModalMemberPlanStatus">실천율: 85% · 최근 컨디션: 4점 (가뿐함)</small>
+          </div>
+        </div>
+
+        <h4 class="text-sm mb-2"><i class="fa-solid fa-clock-rotate-left"></i> 최근 7일 상태 체크 타임라인</h4>
+        <div class="timeline-list" id="admModalMemberCheckins" style="max-height: 200px; overflow-y: auto;">
+          <!-- Checkin Items -->
+        </div>
+
+        <h4 class="text-sm mt-3 mb-2"><i class="fa-solid fa-comments"></i> 1:1 대화 내역</h4>
+        <div class="chat-messages-container" id="admModalMemberMessages" style="max-height: 180px;">
+          <!-- Chat Items -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm" data-close-modal="modalAdminMemberDetail">확인 완료</button>
       </div>
     </div>
   </div>

@@ -1091,6 +1091,311 @@
     showToast('클라우드 동기화 성공! 모든 기기에서 즉시 확인 가능합니다.', 'success');
   });
 
+  // ==========================================
+  // ADMIN CONSOLE & HEALER QUEUE CONTROLLER (AD-01~04, CP-01~04)
+  // ==========================================
+  let isAdminAuthenticated = false;
+  const ADMIN_PASSWORDS = ['admin1234', 'resonance2026'];
+  const ADMIN_INVITES_STORAGE_KEY = 'resonance_admin_invites';
+
+  // Sample Baseline Members for Demo & Live Management
+  const DEFAULT_MANAGED_MEMBERS = [
+    {
+      id: 'user_김회원_5678',
+      name: '김회원',
+      phone: '010-1234-5678',
+      inviteCode: 'RC-2026-VIP',
+      partner: '김복선 치유사',
+      condition: '4점 (가뿐함)',
+      lastCheckin: '오늘 09:30',
+      compliance: '85%',
+      careboxClaimed: true,
+      checkins: [
+        { date: '2026-09-02', condition: 4, sleep: 4, mind: 4, discomfort: 2, memo: '아침에 미온수를 마시니 몸이 가뿐합니다.', submittedAt: '09:30' },
+        { date: '2026-09-01', condition: 3, sleep: 3, mind: 3, discomfort: 4, memo: '목 어깨가 조금 뻐근했습니다.', submittedAt: '21:10' }
+      ],
+      messages: [
+        { sender: 'member', text: '치유사님, 오늘 목 어깨 스트레칭 호흡법 따라하니 한결 시원하네요!', time: '10:15' },
+        { sender: 'partner', text: '김회원님 참 잘하셨습니다! 오늘 저녁 20시 세션에서도 이완 호흡 함께하겠습니다.', time: '10:20' }
+      ]
+    },
+    {
+      id: 'user_이서준_8888',
+      name: '이서준',
+      phone: '010-9999-8888',
+      inviteCode: 'RC-VIP-8432',
+      partner: '김복선 치유사',
+      condition: '5점 (매우 상쾌)',
+      lastCheckin: '오늘 08:20',
+      compliance: '100%',
+      careboxClaimed: true,
+      checkins: [
+        { date: '2026-09-02', condition: 5, sleep: 5, mind: 5, discomfort: 1, memo: '당귀 침출차 마시고 7시간 숙면 취했습니다.', submittedAt: '08:20' }
+      ],
+      messages: [
+        { sender: 'partner', text: '이서준님, 수면 개선 목표가 순조롭게 달성되고 있습니다. 훌륭합니다.', time: '08:30' }
+      ]
+    },
+    {
+      id: 'user_박지현_3333',
+      name: '박지현',
+      phone: '010-7777-3333',
+      inviteCode: 'RC-VIP-5512',
+      partner: '김복선 치유사',
+      condition: '3점 (보통)',
+      lastCheckin: '어제 19:40',
+      compliance: '67%',
+      careboxClaimed: false,
+      checkins: [
+        { date: '2026-09-01', condition: 3, sleep: 4, mind: 3, discomfort: 3, memo: '가을 케어박스 신청 완료했습니다.', submittedAt: '19:40' }
+      ],
+      messages: []
+    }
+  ];
+
+  function getAdminInvites() {
+    try {
+      const saved = localStorage.getItem(ADMIN_INVITES_STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return [
+      { code: 'RC-2026-VIP', target: '공식 마스터 초대권', partner: '김복선 치유사', status: '무제한 활성' },
+      { code: 'RC-VIP-8432', target: '이서준 회원 초대', partner: '김복선 치유사', status: '사용 완료' },
+      { code: 'RC-VIP-5512', target: '박지현 회원 초대', partner: '김복선 치유사', status: '사용 완료' }
+    ];
+  }
+
+  function saveAdminInvites(invites) {
+    localStorage.setItem(ADMIN_INVITES_STORAGE_KEY, JSON.stringify(invites));
+  }
+
+  document.getElementById('btnNavAdmin')?.addEventListener('click', () => {
+    if (isAdminAuthenticated) {
+      showAdminConsole();
+    } else {
+      openModal('modalAdminAuth');
+    }
+  });
+
+  document.getElementById('formAdminAuth')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const pass = document.getElementById('inputAdminPassword')?.value.trim();
+    if (ADMIN_PASSWORDS.includes(pass)) {
+      isAdminAuthenticated = true;
+      closeModal('modalAdminAuth');
+      document.getElementById('inputAdminPassword').value = '';
+      showToast('관리자 & 치유사 콘솔에 접속하였습니다.', 'success');
+      showAdminConsole();
+    } else {
+      alert('비밀번호가 올바르지 않습니다. (기본 비밀번호: admin1234)');
+    }
+  });
+
+  document.getElementById('btnAdminExit')?.addEventListener('click', () => {
+    isAdminAuthenticated = false;
+    renderApp();
+    showToast('관리자 콘솔을 종료하였습니다.', 'info');
+  });
+
+  function showAdminConsole() {
+    document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-admin')?.classList.add('active');
+    renderAdminDashboard();
+  }
+
+  // Admin Sub Tabs Navigation
+  document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      const targetId = btn.getAttribute('data-admin-tab');
+      document.getElementById(targetId)?.classList.add('active');
+    });
+  });
+
+  function renderAdminDashboard() {
+    // 1. KPI Stats
+    const totalMembersEl = document.getElementById('kpiTotalMembers');
+    if (totalMembersEl) totalMembersEl.textContent = `${DEFAULT_MANAGED_MEMBERS.length}명`;
+
+    // 2. Members Table
+    const tbody = document.getElementById('adminMembersTableBody');
+    if (tbody) {
+      tbody.innerHTML = DEFAULT_MANAGED_MEMBERS.map(m => `
+        <tr>
+          <td><strong>${m.name}</strong> <span class="v2-pill">VIP</span></td>
+          <td>${m.phone}</td>
+          <td><code>${m.inviteCode}</code></td>
+          <td><i class="fa-solid fa-user-doctor text-primary"></i> ${m.partner}</td>
+          <td><span class="badge-active">${m.condition}</span></td>
+          <td><small class="text-muted">${m.lastCheckin}</small></td>
+          <td>
+            <button class="btn btn-outline btn-xs" onclick="window.viewAdminMember('${m.id}')">
+              <i class="fa-solid fa-magnifying-glass-chart"></i> 차트 상세
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 3. Rounding Queue
+    const queueList = document.getElementById('adminRoundingQueueList');
+    if (queueList) {
+      queueList.innerHTML = DEFAULT_MANAGED_MEMBERS.map(m => {
+        const latestCheck = m.checkins[0];
+        if (!latestCheck) return '';
+        return `
+          <div class="rounding-queue-card">
+            <div class="rounding-header-flex">
+              <div>
+                <strong>${m.name} 님</strong> · <small class="text-muted">${latestCheck.date} ${latestCheck.submittedAt}</small>
+                <span class="v2-pill ml-2">컨디션 ${latestCheck.condition}점</span>
+              </div>
+              <span class="badge-gold"><i class="fa-solid fa-bed"></i> 수면 ${latestCheck.sleep}점 / 마음 ${latestCheck.mind}점</span>
+            </div>
+            <div class="rounding-memo-quote">
+              <i class="fa-solid fa-quote-left mr-1"></i> "${latestCheck.memo || '특이사항 없음'}"
+            </div>
+            <div class="rounding-reply-box">
+              <input type="text" class="form-input text-xs" id="reply_input_${m.id}" placeholder="김복선 치유사 피드백 입력 (예: 따뜻한 차 음용과 이완 호흡 권장)...">
+              <button class="btn btn-primary btn-xs" onclick="window.sendHealerReply('${m.id}')">
+                <i class="fa-solid fa-paper-plane"></i> 피드백 전송
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 4. Invites List
+    renderAdminInvitesTable();
+  }
+
+  function renderAdminInvitesTable() {
+    const tbody = document.getElementById('adminInvitesTableBody');
+    if (!tbody) return;
+    const invites = getAdminInvites();
+    tbody.innerHTML = invites.map(inv => `
+      <tr>
+        <td><code>${inv.code}</code></td>
+        <td>${inv.target}</td>
+        <td>${inv.partner}</td>
+        <td><span class="${inv.status.includes('활성') ? 'badge-active' : 'tag-badge'}">${inv.status}</span></td>
+        <td>
+          <button class="btn btn-outline btn-xs" onclick="navigator.clipboard.writeText('${inv.code}'); alert('${inv.code} 코드가 클립보드에 복사되었습니다.');">
+            <i class="fa-solid fa-copy"></i> 복사
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // Window Global Helpers for Admin
+  window.viewAdminMember = function(memberId) {
+    const member = DEFAULT_MANAGED_MEMBERS.find(m => m.id === memberId);
+    if (!member) return;
+
+    document.getElementById('admModalMemberName').innerHTML = `<i class="fa-solid fa-user-check text-primary"></i> ${member.name} 님 웰니스 종합 차트`;
+    document.getElementById('admModalMemberMeta').textContent = `연락처: ${member.phone} · 전담: ${member.partner} · 초대코드: ${member.inviteCode}`;
+    document.getElementById('admModalMemberPlanStatus').textContent = `7일 플랜 실천율: ${member.compliance} · 최근 컨디션: ${member.condition}`;
+
+    const checkinList = document.getElementById('admModalMemberCheckins');
+    if (checkinList) {
+      checkinList.innerHTML = member.checkins.map(c => `
+        <div class="timeline-item">
+          <div class="timeline-date">${c.date} (${c.submittedAt})</div>
+          <div class="timeline-content">
+            <strong>컨디션 ${c.condition}점 · 수면 ${c.sleep}점 · 마음 ${c.mind}점 · 불편감 ${c.discomfort}점</strong>
+            <p class="text-xs text-muted mt-1">"${c.memo}"</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    const msgList = document.getElementById('admModalMemberMessages');
+    if (msgList) {
+      msgList.innerHTML = member.messages.map(msg => `
+        <div class="chat-msg-bubble ${msg.sender === 'partner' ? 'partner' : 'member'}">
+          <div class="msg-author">${msg.sender === 'partner' ? '김복선 치유사' : member.name}</div>
+          <div class="msg-text">${msg.text}</div>
+          <div class="msg-time">${msg.time}</div>
+        </div>
+      `).join('') || '<div class="text-muted text-xs text-center py-3">주고받은 대화 내역이 없습니다.</div>';
+    }
+
+    openModal('modalAdminMemberDetail');
+  };
+
+  window.sendHealerReply = function(memberId) {
+    const input = document.getElementById(`reply_input_${memberId}`);
+    const text = input?.value.trim();
+    if (!text) return;
+
+    const member = DEFAULT_MANAGED_MEMBERS.find(m => m.id === memberId);
+    if (member) {
+      member.messages.push({
+        sender: 'partner',
+        text: `[김복선 치유사 피드백] ${text}`,
+        time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+      });
+      input.value = '';
+      showToast(`${member.name} 님에게 김복선 치유사 피드백이 전송되었습니다!`, 'success');
+    }
+  };
+
+  document.getElementById('btnAdminCreateInviteCode')?.addEventListener('click', () => {
+    const target = document.getElementById('inputAdminInviteTarget')?.value.trim() || '신규 VIP 회원';
+    const partner = document.getElementById('inputAdminInvitePartner')?.value.trim() || '김복선 치유사';
+    const newCode = `RC-VIP-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const invites = getAdminInvites();
+    invites.unshift({ code: newCode, target, partner, status: '발급 활성' });
+    saveAdminInvites(invites);
+    renderAdminInvitesTable();
+
+    document.getElementById('inputAdminInviteTarget').value = '';
+    showToast(`새 VIP 초대 코드 [${newCode}] 가 정상 발급되었습니다!`, 'success');
+  });
+
+  document.getElementById('formAdminOfficialNotice')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const content = document.getElementById('inputAdminNoticeContent')?.value.trim();
+    if (!content) return;
+
+    const newNotice = {
+      id: `notice_${Date.now()}`,
+      author: '김복선 치유사',
+      isOfficial: true,
+      category: 'notice',
+      content,
+      time: '방금 전',
+      likes: 0,
+      isLiked: false
+    };
+
+    if (userData) {
+      userData.communityPosts.unshift(newNotice);
+      saveUserData();
+    }
+    syncToCentralServer(currentUser, userData, newNotice);
+
+    document.getElementById('inputAdminNoticeContent').value = '';
+    showToast('공식 웰니스 공지가 전체 회원 커뮤니티에 등록되었습니다!', 'success');
+  });
+
+  document.getElementById('btnAdminSaveYoutubeUrl')?.addEventListener('click', () => {
+    const url = document.getElementById('inputAdminYoutubeUrl')?.value.trim();
+    if (!url) return;
+    localStorage.setItem(YOUTUBE_STREAM_STORAGE_KEY, url);
+    showToast('유튜브 생중계 라이브 채널 주소가 전체 적용되었습니다.', 'success');
+  });
+
+  document.getElementById('btnRefreshAdminMembers')?.addEventListener('click', () => {
+    renderAdminDashboard();
+    showToast('회원 명단 및 최신 건강 상태를 갱신하였습니다.', 'info');
+  });
+
   // Initial App Render & Cloud Badge & Central Server Sync
   renderApp();
   updateCloudBadge();

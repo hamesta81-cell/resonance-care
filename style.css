@@ -1037,6 +1037,117 @@ body {
   color: #FDE68A;
 }
 
+/* Google Stitch 3D Botanical Encyclopedia Card */
+.stitch-encyclopedia-banner {
+  background: linear-gradient(rgba(10, 14, 26, 0.75), rgba(7, 10, 18, 0.9)), url('stitch_herbs.png') center/cover no-repeat;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+  min-height: 180px;
+}
+
+.stitch-encyclopedia-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-gold);
+  letter-spacing: 1.5px;
+}
+
+.stitch-encyclopedia-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 4px;
+}
+
+/* Google Stitch Ultra-Luxury 3D VIP Benefit Wallet Card */
+.benefit-wallet-gold-card {
+  background: linear-gradient(135deg, rgba(16, 22, 38, 0.85), rgba(8, 11, 20, 0.95)), url('stitch_vip_card.png') right 10px center / 220px auto no-repeat;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(245, 158, 11, 0.18);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  position: relative;
+  overflow: hidden;
+}
+
+.benefit-wallet-gold-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #F59E0B, #FBBF24, transparent);
+}
+
+.wallet-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.wallet-badge {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #FBBF24;
+  background: rgba(245, 158, 11, 0.15);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.wallet-credit-amount small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+  letter-spacing: 1px;
+}
+
+.wallet-credit-amount strong {
+  font-size: 32px;
+  font-weight: 900;
+  color: #FBBF24;
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+.wallet-perks-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 22px;
+}
+
+.perk-col label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.perk-col strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.wallet-action-btns {
+  display: flex;
+  gap: 12px;
+}
+
 .carebox-preview-banner {
   background: var(--bg-card);
   border: 1px solid rgba(245, 158, 11, 0.3);

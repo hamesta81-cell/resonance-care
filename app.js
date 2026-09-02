@@ -90,9 +90,33 @@
         await client.from('messages').upsert(msgRows);
       }
 
+      // 5. Sync Community Posts (커뮤니티 안부 글 영구 보존)
+      if (data.communityPosts && data.communityPosts.length > 0) {
+        const postRows = data.communityPosts.map(p => ({
+          id: p.id,
+          user_id: user.id,
+          author: p.author,
+          category: p.category,
+          content: p.content,
+          likes: p.likes || 0
+        }));
+        await client.from('community_posts').upsert(postRows);
+      }
+
+      // Also backup snapshot to local REST server if available
+      try {
+        fetch('/api/checkin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id, ...data })
+        }).catch(() => {});
+      } catch(e) {}
+
       updateCloudBadge(true);
     } catch(err) {
-      console.warn('Supabase sync warning:', err);
+      console.warn('Supabase sync warning (will retry automatically):', err);
+      // Auto retry after 5 seconds
+      setTimeout(() => syncToSupabase(user, data), 5000);
     }
   }
 
@@ -401,10 +425,20 @@
   });
 
   // ==========================================
-  // V2 FEATURE 1: MB-12 DAILY CHECKIN
+  // V2 FEATURE 1: MB-12 DAILY CHECKIN (WITH DRAFT AUTO-SAVE)
   // ==========================================
+  const txtCheckinMemo = document.getElementById('txtCheckinMemo');
+  txtCheckinMemo?.addEventListener('input', () => {
+    localStorage.setItem('resonance_draft_memo', txtCheckinMemo.value);
+  });
+
   document.getElementById('btnOpenCheckinModal')?.addEventListener('click', () => {
     if (!currentUser) { openModal('modalLogin'); return; }
+    // Restore draft memo if exists
+    const draft = localStorage.getItem('resonance_draft_memo');
+    if (draft && txtCheckinMemo && !txtCheckinMemo.value) {
+      txtCheckinMemo.value = draft;
+    }
     openModal('modalCheckin');
   });
 
@@ -421,7 +455,7 @@
     const sleep = getScaleVal('sleep');
     const mind = getScaleVal('mind');
     const discomfort = discomfortRange ? parseInt(discomfortRange.value, 10) : 2;
-    const memo = document.getElementById('txtCheckinMemo')?.value.trim() || '';
+    const memo = txtCheckinMemo?.value.trim() || '';
 
     const todayStr = new Date().toISOString().slice(0, 10);
     const newCheckin = {
@@ -439,9 +473,11 @@
     userData.todayCheckinData = newCheckin;
     userData.checkins.unshift(newCheckin);
 
+    // Clear Draft on success
+    localStorage.removeItem('resonance_draft_memo');
     saveUserData();
     closeModal('modalCheckin');
-    showToast('오늘의 상태 체크가 김복선 치유사에게 전송 및 기록되었습니다!', 'success');
+    showToast('오늘의 상태 체크가 영구 저장 및 김복선 치유사에게 전송되었습니다!', 'success');
     renderMemberView();
   });
 
@@ -550,8 +586,17 @@
     });
   });
 
+  const txtPostContent = document.getElementById('txtPostContent');
+  txtPostContent?.addEventListener('input', () => {
+    localStorage.setItem('resonance_draft_post', txtPostContent.value);
+  });
+
   document.getElementById('btnOpenNewPostModal')?.addEventListener('click', () => {
     if (!currentUser) { openModal('modalLogin'); return; }
+    const draft = localStorage.getItem('resonance_draft_post');
+    if (draft && txtPostContent && !txtPostContent.value) {
+      txtPostContent.value = draft;
+    }
     openModal('modalNewPost');
   });
 
@@ -560,7 +605,7 @@
     if (!currentUser || !userData) return;
 
     const category = document.getElementById('postCategorySelect')?.value || 'lounge';
-    const content = document.getElementById('txtPostContent')?.value.trim();
+    const content = txtPostContent?.value.trim();
     if (!content) return;
 
     const newPost = {
@@ -575,10 +620,11 @@
     };
 
     userData.communityPosts.unshift(newPost);
+    localStorage.removeItem('resonance_draft_post');
     saveUserData();
-    document.getElementById('txtPostContent').value = '';
+    if (txtPostContent) txtPostContent.value = '';
     closeModal('modalNewPost');
-    showToast('커뮤니티에 안부 글이 등록되었습니다!', 'success');
+    showToast('커뮤니티에 안부 글이 영구 저장 및 등록되었습니다!', 'success');
     renderCommunityFeed();
   });
 

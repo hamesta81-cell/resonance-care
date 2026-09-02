@@ -954,6 +954,8 @@
       if (target === 'm-tab-knowledge') {
         renderHerbsDictionary();
         renderAcupoints();
+        renderSasangEncyclopedia();
+        renderPrescriptionsEncyclopedia();
       }
     });
   });
@@ -1008,6 +1010,8 @@
     renderTimeline();
     renderHerbsDictionary();
     renderAcupoints();
+    renderSasangEncyclopedia();
+    renderPrescriptionsEncyclopedia();
   }
 
   function renderTimeline() {
@@ -1249,6 +1253,120 @@
 
     openModal('modalAcupointDetail');
   };
+
+  // ==========================================
+  // TCM AI DIAGNOSTIC ENGINE & ENCYCLOPEDIA LOGIC (KN-04~06)
+  // ==========================================
+  document.getElementById('btnRunTcmDiagnosis')?.addEventListener('click', () => {
+    const qTemp = document.getElementById('diagQTemp')?.value || 'cold';
+    const qDigestion = document.getElementById('diagQDigestion')?.value || 'weak';
+    const qSleep = document.getElementById('diagQSleep')?.value || 'fatigue';
+    const qMind = document.getElementById('diagQMind')?.value || 'anxiety';
+
+    const resultBox = document.getElementById('tcmResultBox');
+    const resName = document.getElementById('resTcmConstitutionName');
+    const resOrgan = document.getElementById('resTcmOrganTrait');
+    const resRx = document.getElementById('resTcmClassicRx');
+    const resRxDesc = document.getElementById('resTcmRxDesc');
+    const resHerbs = document.getElementById('resTcmHerbs');
+    const resHerbsDesc = document.getElementById('resTcmHerbsDesc');
+    const resAcupoints = document.getElementById('resTcmAcupoints');
+    const resAcupointDesc = document.getElementById('resTcmAcupointDesc');
+    const resDiet = document.getElementById('resTcmDiet');
+    const resLifestyle = document.getElementById('resTcmLifestyle');
+
+    if (!resultBox) return;
+
+    // Intelligent TCM Diagnostic Algorithm
+    if (qTemp === 'cold' || qDigestion === 'weak') {
+      // 소음인 (少陰人) - 비위허한 / 기혈부족
+      if (resName) resName.textContent = '소음인 (少陰人) - 비위허한(脾胃虛寒) & 기혈허증';
+      if (resOrgan) resOrgan.textContent = '신대비소 (腎大脾小): 하체와 신장 기운은 실하나 소화기 비위가 차고 약한 체질';
+      if (resRx) resRx.textContent = '보중익기탕(補中益氣湯) · 십전대보탕(十全大補湯)';
+      if (resRxDesc) resRxDesc.textContent = '소화기 중심 비위의 양기를 끌어올리고 기와 혈을 고르게 쌍보';
+      if (resHerbs) resHerbs.textContent = '유기농 당귀차 + 햇황기차 + 대추생강차';
+      if (resHerbsDesc) resHerbsDesc.textContent = '신체 중심 온기를 회복시키고 손발 끝까지 기혈 순환을 자양';
+      if (resAcupoints) resAcupoints.textContent = '족삼리(ST36) · 합곡혈(LI4) · 중완(CV12)';
+      if (resAcupointDesc) resAcupointDesc.textContent = '아침 기상 후 족삼리와 합곡혈을 1분간 지그시 지압하여 비위 활성화';
+      if (resDiet) resDiet.textContent = '추천: 닭고기, 찹쌀, 생강, 부추, 사과 | 기피: 찬 메밀, 돼지고기, 빙과류';
+      if (resLifestyle) resLifestyle.textContent = '배와 발을 항상 따뜻하게 보온하고, 찬물 대신 따뜻한 미온수를 상복하세요.';
+    } else if (qTemp === 'hot' || qMind === 'anger') {
+      // 소양인 (少陽人) - 심화상염 / 음허화왕
+      if (resName) resName.textContent = '소양인 (少陽人) - 음허화왕(陰虛火旺) & 상열증';
+      if (resOrgan) resOrgan.textContent = '비대신소 (脾大腎小): 소화열과 상체 기운은 왕성하나 신장 음액과 하체 기운이 약한 체질';
+      if (resRx) resRx.textContent = '육미지황환(六味地黃丸) · 천왕보심단(天王補心丹)';
+      if (resRxDesc) resRxDesc.textContent = '신장의 음액을 채워 허열을 내리고 심신을 깊이 안정시킴';
+      if (resHerbs) resHerbs.textContent = '구기자산수유차 + 복분자차 + 결명자차';
+      if (resHerbsDesc) resHerbsDesc.textContent = '간신(肝腎)의 진액을 보충하고 눈과 머리의 열감을 맑게 정화';
+      if (resAcupoints) resAcupoints.textContent = '태충(LR3) · 내관(PC6) · 용천(KI1)';
+      if (resAcupointDesc) resAcupointDesc.textContent = '취침 전 용천혈과 내관혈을 지압하여 상체 열을 하체로 하강 유도';
+      if (resDiet) resDiet.textContent = '추천: 돼지고기, 오리고기, 보리, 녹두, 오이, 수박 | 기피: 매운 고추, 마늘, 인삼, 꿀';
+      if (resLifestyle) resLifestyle.textContent = '조급함을 가라앉히는 4-7-8 이완 호흡과 서늘한 환경에서의 명상을 추천합니다.';
+    } else if (qTemp === 'sweat' || qSleep === 'heavy_body') {
+      // 태음인 (太陰人) - 습담정체 / 간대폐소
+      if (resName) resName.textContent = '태음인 (太陰人) - 습담정체(濕痰停滯) & 간열폐조';
+      if (resOrgan) resOrgan.textContent = '간대폐소 (肝大肺小): 간의 저장 기능은 크나 폐와 호흡기 발산 기능이 부족한 체질';
+      if (resRx) resRx.textContent = '청폐사간탕(淸肺瀉肝湯) · 갈근해기탕(葛根解肌湯)';
+      if (resRxDesc) resRxDesc.textContent = '폐의 발산력을 돕고 체내 불필요한 노폐물 습담을 배출';
+      if (resHerbs) resHerbs.textContent = '율무차 + 오미자차 + 맥문동도라지차';
+      if (resHerbsDesc) resHerbsDesc.textContent = '기관지와 폐를 윤택하게 하고 수액 대사를 원활하게 정화';
+      if (resAcupoints) resAcupoints.textContent = '풍륭(ST40) · 풍지(GB20) · 음릉천(SP9)';
+      if (resAcupointDesc) resAcupointDesc.textContent = '식후 풍륭혈과 뒷목 풍지혈을 자극하여 머리 무거움과 습담 해소';
+      if (resDiet) resDiet.textContent = '추천: 소고기, 율무, 콩, 무, 도라지, 밤, 은행 | 기피: 자극적인 삼계탕, 인삼, 과식';
+      if (resLifestyle) resLifestyle.textContent = '온욕이나 유산소 운동으로 땀을 충분히 내어 체내 노폐물을 발산시키는 것이 필수적입니다.';
+    } else {
+      // 태양인 (太陽人) 또는 상열하한 기체증
+      if (resName) resName.textContent = '태양인 (太陽人) / 간기울결(肝氣鬱結) 기체증';
+      if (resOrgan) resOrgan.textContent = '폐대간소 (肺大肝小): 기운의 상승력이 강하나 간의 해독과 하강력이 부족한 체질';
+      if (resRx) resRx.textContent = '소요산(逍遙散) · 오가피장척탕(五加皮壯脊湯)';
+      if (resRxDesc) resRxDesc.textContent = '울체된 기운을 시원하게 소통시키고 하체 기운을 강화';
+      if (resHerbs) resHerbs.textContent = '모과차 + 솔잎차 + 박하차';
+      if (resHerbsDesc) resHerbsDesc.textContent = '가슴의 홧병을 풀고 근육과 관절의 피로를 유연하게 이완';
+      if (resAcupoints) resAcupoints.textContent = '사관혈 (합곡 LI4 + 태충 LR3) · 전중(CV17)';
+      if (resAcupointDesc) resAcupointDesc.textContent = '사관혈을 동시에 지압하여 전신에 막힌 기혈을 뚫어주는 최고 요법';
+      if (resDiet) resDiet.textContent = '추천: 메밀, 포도, 감, 다래, 조개류 | 기피: 맵고 기름진 육류, 뜨거운 조미료';
+      if (resLifestyle) resLifestyle.textContent = '마음을 넓고 편안하게 다스리며 담백한 자연 식단을 유지하세요.';
+    }
+
+    resultBox.style.display = 'block';
+    resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showToast('한의학 변증 & 사상체질 AI 진단 결과가 도출되었습니다!', 'success');
+  });
+
+  function renderSasangEncyclopedia() {
+    const container = document.getElementById('sasangGridContainer');
+    if (!container || !window.TCM_DATABASE) return;
+
+    container.innerHTML = window.TCM_DATABASE.constitutions.map(c => `
+      <div class="sasang-card">
+        <div>
+          <div class="sasang-name">${c.name}</div>
+          <span class="sasang-organ">${c.organTrait.split(' - ')[0]}</span>
+          <p>${c.characteristics}</p>
+        </div>
+        <div class="sasang-meta-box">
+          <div><strong class="text-gold">보양 본초:</strong> ${c.healingHerbs}</div>
+          <div><strong class="text-success">대표 방제:</strong> ${c.classicRx.split(',')[0]} 등</div>
+          <div><strong class="text-info">식습관:</strong> ${c.recommendedDiet.split(',').slice(0, 4).join(', ')}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderPrescriptionsEncyclopedia() {
+    const container = document.getElementById('prescriptionsGridContainer');
+    if (!container || !window.TCM_DATABASE) return;
+
+    container.innerHTML = window.TCM_DATABASE.prescriptions.map(rx => `
+      <div class="prescription-card">
+        <h5>${rx.name} <small>[${rx.origin}]</small></h5>
+        <span class="rx-effects-tag">${rx.effects.split(' - ')[0]}</span>
+        <p class="text-xs text-sub mb-2">${rx.indication}</p>
+        <div class="rx-comp-text"><strong>처방 구성:</strong> ${rx.composition}</div>
+      </div>
+    `).join('');
+  }
+
   document.getElementById('btnOpenSupabaseModal')?.addEventListener('click', () => {
     const configStr = localStorage.getItem(SUPABASE_CONFIG_KEY);
     if (configStr) {

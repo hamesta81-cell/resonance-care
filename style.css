@@ -1318,6 +1318,193 @@ body.luxury-body {
   gap: 4px;
 }
 
+/* ========================================================
+   TCM AI DIAGNOSTIC ENGINE & ENCYCLOPEDIA STYLES (KN-04~06)
+   ======================================================== */
+.tcm-analyzer-card {
+  background: linear-gradient(135deg, rgba(14, 20, 36, 0.95), rgba(7, 10, 18, 0.98));
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(245, 158, 11, 0.1);
+  backdrop-filter: blur(24px);
+}
+
+.tcm-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 18px;
+}
+
+.tcm-q-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .tcm-q-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tcm-q-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.q-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #E2E8F0;
+}
+
+.tcm-result-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.tcm-result-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 14px;
+}
+
+.tcm-result-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 768px) {
+  .tcm-result-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tcm-detail-card {
+  background: rgba(10, 14, 26, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+
+/* Sasang Grid */
+.sasang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.sasang-card {
+  background: rgba(14, 20, 36, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: var(--transition-fast);
+  backdrop-filter: blur(16px);
+}
+
+.sasang-card:hover {
+  border-color: rgba(245, 158, 11, 0.45);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.sasang-name {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--accent-gold);
+}
+
+.sasang-organ {
+  font-size: 11px;
+  color: #38BDF8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  margin: 4px 0 10px;
+}
+
+.sasang-card p {
+  font-size: 12px;
+  color: var(--text-sub);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.sasang-meta-box {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Prescriptions Grid */
+.prescriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.prescription-card {
+  background: linear-gradient(135deg, rgba(16, 23, 42, 0.9), rgba(11, 15, 28, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  transition: var(--transition-fast);
+}
+
+.prescription-card:hover {
+  border-color: #34D399;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.prescription-card h5 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prescription-card small {
+  font-size: 10px;
+  color: var(--accent-gold);
+}
+
+.rx-effects-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #34D399;
+  margin: 4px 0 8px;
+  display: block;
+}
+
+.rx-comp-text {
+  font-size: 11px;
+  color: #CBD5E1;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
 /* Google Stitch 3D Botanical Encyclopedia Card */
 .stitch-encyclopedia-banner {
   background: linear-gradient(rgba(10, 14, 26, 0.75), rgba(7, 10, 18, 0.9)), url('stitch_herbs.png') center/cover no-repeat;

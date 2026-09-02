@@ -487,6 +487,130 @@
               <!-- Dynamic Acupoint Cards rendered by app.js -->
             </div>
           </div>
+
+          <!-- ====================================================
+               NEW: 한의학 AI 자가 진단 & 체질별 맞춤 처방 분석기 (KN-04)
+               ==================================================== -->
+          <div class="tcm-ai-diagnostic-section mt-5">
+            <div class="tcm-analyzer-card">
+              <div class="tcm-card-head">
+                <div>
+                  <span class="badge-gold"><i class="fa-solid fa-wand-magic-sparkles"></i> TCM AI DIAGNOSIS ENGINE</span>
+                  <h4 class="text-xl font-bold mt-1 text-gold"><i class="fa-solid fa-yin-yang"></i> 한의학 변증 & 사상체질 1분 자가 진단기</h4>
+                  <p class="text-muted text-xs">나의 체질과 기혈(氣血) 불균형을 분석하여 맞춤 한방 명방과 섭생 가이드를 도출합니다.</p>
+                </div>
+                <span class="badge-credit"><i class="fa-solid fa-user-doctor"></i> 김복선 치유사 감수</span>
+              </div>
+
+              <!-- Diagnostic Questions Form -->
+              <div class="tcm-diagnosis-form mt-4">
+                <div class="tcm-q-grid">
+                  <div class="tcm-q-item">
+                    <label class="q-label"><i class="fa-solid fa-temperature-half text-primary"></i> 1. 체온 & 추위/더위 반응</label>
+                    <select class="form-input" id="diagQTemp">
+                      <option value="cold">손발과 아랫배가 항상 차고 추위를 심하게 탐 (소음인/한증)</option>
+                      <option value="hot">몸에 열이 많고 얼굴이나 가슴으로 열이 뜸 (소양인/열증)</option>
+                      <option value="sweat">체격이 크고 땀을 많이 흘리나 추위더위 무난함 (태음인/습담)</option>
+                      <option value="upper">상체는 열이 오르고 하체는 차가움 (상열하한/기체)</option>
+                    </select>
+                  </div>
+
+                  <div class="tcm-q-item">
+                    <label class="q-label"><i class="fa-solid fa-utensils text-primary"></i> 2. 소화 & 식욕 상태</label>
+                    <select class="form-input" id="diagQDigestion">
+                      <option value="weak">소화기가 약해 잘 체하고 찬 음식을 먹으면 탈이 남</option>
+                      <option value="fast">식욕이 왕성하고 소화가 매우 빠르나 가끔 속쓰림</option>
+                      <option value="heavy">식후에 더부룩하고 명치가 답답하며 식곤증이 심함</option>
+                      <option value="gas">스트레스만 받으면 체하고 가스·트림이 잦음</option>
+                    </select>
+                  </div>
+
+                  <div class="tcm-q-item">
+                    <label class="q-label"><i class="fa-solid fa-moon text-primary"></i> 3. 수면 & 피로 양상</label>
+                    <select class="form-input" id="diagQSleep">
+                      <option value="fatigue">아침에 일어나기 힘들고 항상 만성 피로와 무기력증</option>
+                      <option value="dream">잠들기 어렵고 꿈이 많아 자주 깨며 가슴이 두근거림</option>
+                      <option value="hot_feet">밤에 손발바닥이 화끈거려 이불 밖으로 내밀고 잠</option>
+                      <option value="heavy_body">비 오는 날이나 아침에 몸과 머리가 천근만근 무거움</option>
+                    </select>
+                  </div>
+
+                  <div class="tcm-q-item">
+                    <label class="q-label"><i class="fa-solid fa-heart-pulse text-primary"></i> 4. 감정 & 스트레스 반응</label>
+                    <select class="form-input" id="diagQMind">
+                      <option value="anxiety">사소한 일에도 걱정이 많고 생각이 꼬리를 물며 불안함</option>
+                      <option value="anger">답답한 것을 못 참아 욱하고 화가 치밀며 한숨이 잦음</option>
+                      <option value="depress">의욕이 없고 만사가 귀찮으며 목에 무언가 걸린 느낌</option>
+                      <option value="calm">비교적 침착하나 과로 시 피로가 뼈마디로 옴</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="text-center mt-4">
+                  <button type="button" class="btn btn-gold btn-lg w-full" id="btnRunTcmDiagnosis">
+                    <i class="fa-solid fa-yin-yang"></i> 한의학 변증 & 사상체질 AI 진단 실행하기
+                  </button>
+                </div>
+              </div>
+
+              <!-- Diagnostic Result Panel (Dynamic) -->
+              <div class="tcm-result-box mt-4" id="tcmResultBox" style="display:none;">
+                <div class="tcm-result-header">
+                  <div>
+                    <span class="badge-gold" id="resTcmBadge">사상체질 분석 결과</span>
+                    <h3 class="text-2xl font-bold mt-1 text-gold" id="resTcmConstitutionName">소음인 (少陰人) - 기혈허증</h3>
+                    <p class="text-sm text-sub mt-1" id="resTcmOrganTrait">신대비소: 신장은 튼튼하나 소화기 비위가 차고 약한 체질</p>
+                  </div>
+                </div>
+
+                <div class="tcm-result-details-grid mt-3">
+                  <div class="tcm-detail-card">
+                    <h5 class="text-gold text-sm font-bold"><i class="fa-solid fa-flask"></i> 추천 한방 명방 (方劑)</h5>
+                    <strong class="text-white text-base block mt-1" id="resTcmClassicRx">보중익기탕 / 십전대보탕</strong>
+                    <p class="text-xs text-muted mt-1" id="resTcmRxDesc">소화기 비위의 중심 기운을 올리고 기혈을 쌍보</p>
+                  </div>
+
+                  <div class="tcm-detail-card">
+                    <h5 class="text-primary text-sm font-bold"><i class="fa-solid fa-leaf"></i> 맞춤 보양 약초차</h5>
+                    <strong class="text-white text-base block mt-1" id="resTcmHerbs">유기농 당귀차 + 황기차</strong>
+                    <p class="text-xs text-muted mt-1" id="resTcmHerbsDesc">기혈 순환을 돕고 손발을 따뜻하게 자양</p>
+                  </div>
+
+                  <div class="tcm-detail-card">
+                    <h5 class="text-info text-sm font-bold"><i class="fa-solid fa-hands-holding"></i> 필수 추천 지압 혈자리</h5>
+                    <strong class="text-white text-base block mt-1" id="resTcmAcupoints">족삼리(ST36) · 합곡혈(LI4) · 기해</strong>
+                    <p class="text-xs text-muted mt-1" id="resTcmAcupointDesc">매일 기상 직후 및 취침 전 1분간 지압</p>
+                  </div>
+
+                  <div class="tcm-detail-card">
+                    <h5 class="text-warning text-sm font-bold"><i class="fa-solid fa-utensils"></i> 맞춤 섭생 & 주의 음식</h5>
+                    <strong class="text-white text-base block mt-1" id="resTcmDiet">추천: 닭고기, 찹쌀, 생강 | 기피: 찬 메밀, 돼지고기</strong>
+                    <p class="text-xs text-muted mt-1" id="resTcmLifestyle">배와 손발을 따뜻하게 유지하고 소식(小食) 권장</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====================================================
+               사상체질(四象體質) 4대 섭생 백과 DB (KN-05)
+               ==================================================== -->
+          <div class="tcm-encyclopedia-section mt-5">
+            <h4 class="text-xl font-bold mb-3"><i class="fa-solid fa-book-journal-whills text-gold"></i> 사상체질(四象體質) 4대 섭생 백과</h4>
+            <div class="sasang-grid" id="sasangGridContainer">
+              <!-- Dynamic Sasang Cards -->
+            </div>
+          </div>
+
+          <!-- ====================================================
+               고전 대표 명방(方劑) 8대 처방전 DB (KN-06)
+               ==================================================== -->
+          <div class="tcm-prescriptions-section mt-5">
+            <h4 class="text-xl font-bold mb-3"><i class="fa-solid fa-scroll text-gold"></i> 한의학 고전 대표 명방(方劑) 백과</h4>
+            <div class="prescriptions-grid" id="prescriptionsGridContainer">
+              <!-- Dynamic Prescription Cards -->
+            </div>
+          </div>
         </div>
 
         <!-- ====================================================
@@ -1206,6 +1330,7 @@
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <script src="app.js?v=20260902_masterpiece_acupoints"></script>
+  <script src="tcm_database.js?v=20260903_tcm"></script>
+  <script src="app.js?v=20260903_tcm_master"></script>
 </body>
 </html>

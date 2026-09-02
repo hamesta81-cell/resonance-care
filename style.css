@@ -131,6 +131,17 @@ body {
   color: var(--primary);
 }
 
+.cloud-sync-btn {
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #7DD3FC;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.cloud-sync-btn:hover {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: #38BDF8;
+}
+
 /* Legal Notice Banner */
 .medical-disclaimer-banner {
   background: linear-gradient(90deg, #1e293b, #111827);

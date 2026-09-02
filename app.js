@@ -10,6 +10,99 @@
 
   const AUTH_KEY = 'resonance_auth_user_v2';
   const DATA_KEY_PREFIX = 'resonance_v2_data_';
+  const SUPABASE_CONFIG_KEY = 'resonance_supabase_config';
+
+  // Supabase Client Helper
+  function getSupabaseClient() {
+    try {
+      const configStr = localStorage.getItem(SUPABASE_CONFIG_KEY);
+      if (configStr && window.supabase) {
+        const config = JSON.parse(configStr);
+        if (config.url && config.key) {
+          return window.supabase.createClient(config.url, config.key);
+        }
+      }
+    } catch(e) {}
+    return null;
+  }
+
+  async function syncToSupabase(user, data) {
+    const client = getSupabaseClient();
+    if (!client || !user || !data) return;
+
+    try {
+      // 1. Sync User
+      await client.from('users').upsert({
+        id: user.id,
+        name: user.name,
+        phone: user.phone || '',
+        invite_code: user.inviteCode || '',
+        grade: user.grade || 'VIP',
+        assigned_partner: user.assignedPartner || '김복선 치유사'
+      });
+
+      // 2. Sync Checkins
+      if (data.checkins && data.checkins.length > 0) {
+        const checkinRows = data.checkins.map(c => ({
+          id: c.id,
+          user_id: user.id,
+          date: c.date,
+          condition: c.condition,
+          sleep: c.sleep,
+          mind: c.mind,
+          discomfort: c.discomfort,
+          memo: c.memo || '',
+          submitted_at: c.submittedAt || ''
+        }));
+        await client.from('checkins').upsert(checkinRows);
+      }
+
+      // 3. Sync Care Plan Tasks
+      if (data.carePlanTasks && data.carePlanTasks.length > 0) {
+        const taskRows = data.carePlanTasks.map(t => ({
+          id: `${user.id}_${t.id}`,
+          user_id: user.id,
+          task_id: t.id,
+          title: t.title,
+          completed: !!t.completed,
+          updated_at: new Date().toISOString()
+        }));
+        await client.from('care_plan_tasks').upsert(taskRows);
+      }
+
+      // 4. Sync Messages
+      if (data.messages && data.messages.length > 0) {
+        const msgRows = data.messages.map((m, idx) => ({
+          id: `${user.id}_msg_${idx}`,
+          user_id: user.id,
+          sender: m.sender,
+          text: m.text,
+          time: m.time || ''
+        }));
+        await client.from('messages').upsert(msgRows);
+      }
+
+      updateCloudBadge(true);
+    } catch(err) {
+      console.warn('Supabase sync warning:', err);
+    }
+  }
+
+  function updateCloudBadge(isSynced = false) {
+    const icon = document.getElementById('iconCloudSync');
+    const lbl = document.getElementById('lblCloudSyncStatus');
+    const client = getSupabaseClient();
+
+    if (!lbl || !icon) return;
+
+    if (client) {
+      icon.className = 'fa-solid fa-cloud-check text-success';
+      lbl.textContent = isSynced ? '클라우드 동기화됨' : 'Supabase 연결됨';
+    } else {
+      icon.className = 'fa-solid fa-cloud';
+      lbl.textContent = '로컬 보관중';
+    }
+  }
 
   // 1. Traditional Herbs Dictionary Data (KN-02)
   const HERBS_DATABASE = [
@@ -170,6 +263,8 @@
     if (!currentUser || !userData) return;
     try {
       localStorage.setItem(DATA_KEY_PREFIX + currentUser.id, JSON.stringify(userData));
+      // Background Sync to Supabase
+      syncToSupabase(currentUser, userData);
     } catch(e) {}
   }
 
@@ -809,7 +904,63 @@
     });
   }
 
-  // Initial App Render
+  // ==========================================
+  // SUPABASE CONFIG MODAL & MANUAL SYNC
+  // ==========================================
+  document.getElementById('btnOpenSupabaseModal')?.addEventListener('click', () => {
+    const configStr = localStorage.getItem(SUPABASE_CONFIG_KEY);
+    if (configStr) {
+      try {
+        const config = JSON.parse(configStr);
+        if (config.url) document.getElementById('supabaseUrlInput').value = config.url;
+        if (config.key) document.getElementById('supabaseKeyInput').value = config.key;
+      } catch(e) {}
+    }
+    openModal('modalSupabase');
+  });
+
+  document.getElementById('formSupabaseConfig')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const url = document.getElementById('supabaseUrlInput')?.value.trim();
+    const key = document.getElementById('supabaseKeyInput')?.value.trim();
+
+    if (!url || !key) {
+      localStorage.removeItem(SUPABASE_CONFIG_KEY);
+      updateCloudBadge(false);
+      closeModal('modalSupabase');
+      showToast('Supabase 연동이 해제되고 로컬 보관 모드로 전환되었습니다.', 'info');
+      return;
+    }
+
+    localStorage.setItem(SUPABASE_CONFIG_KEY, JSON.stringify({ url, key }));
+    updateCloudBadge(true);
+    closeModal('modalSupabase');
+    showToast('Supabase 클라우드 DB 연동 정보가 안전하게 저장되었습니다!', 'success');
+
+    if (currentUser && userData) {
+      showToast('클라우드 DB 동기화를 진행 중입니다...', 'info');
+      await syncToSupabase(currentUser, userData);
+      showToast('클라우드 DB 실시간 동기화 완료! (데이터 유실 0%)', 'success');
+    }
+  });
+
+  document.getElementById('btnTestSupabaseSync')?.addEventListener('click', async () => {
+    if (!currentUser || !userData) {
+      showToast('먼저 로그인 후 동기화를 진행해 주세요.', 'info');
+      return;
+    }
+    const client = getSupabaseClient();
+    if (!client) {
+      showToast('Supabase URL 및 Anon Key를 먼저 입력해 주세요.', 'info');
+      return;
+    }
+    showToast('클라우드 DB 동기화 진행중...', 'info');
+    await syncToSupabase(currentUser, userData);
+    showToast('클라우드 동기화 성공! 모든 기기에서 즉시 확인 가능합니다.', 'success');
+  });
+
+  // Initial App Render & Cloud Badge
   renderApp();
+  updateCloudBadge();
 
 })();

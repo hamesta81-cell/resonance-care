@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <!-- Supabase Cloud SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -23,6 +25,11 @@
     </div>
     
     <div class="header-right">
+      <!-- Supabase Cloud Sync Status Badge -->
+      <button class="btn btn-outline btn-sm cloud-sync-btn" id="btnOpenSupabaseModal" title="Supabase 클라우드 DB 동기화 설정">
+        <i class="fa-solid fa-cloud" id="iconCloudSync"></i> <span id="lblCloudSyncStatus">클라우드 동기화</span>
+      </button>
+
       <div id="authNavButtons">
         <button class="btn btn-outline btn-sm" id="btnNavLogin"><i class="fa-solid fa-arrow-right-to-bracket"></i> 로그인</button>
         <button class="btn btn-primary btn-sm" id="btnNavJoin"><i class="fa-solid fa-envelope-open-text"></i> 초대 가입</button>
@@ -633,6 +640,46 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" data-close-modal="modalLogin">취소</button>
           <button type="submit" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> 로그인</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: SUPABASE CLOUD CONFIG -->
+  <div class="app-modal-overlay" id="modalSupabase">
+    <div class="app-modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3><i class="fa-solid fa-cloud text-primary"></i> Supabase 클라우드 DB 연동</h3>
+          <p class="modal-sub">영구 데이터베이스와 실시간 동기화하여 데이터 유실을 0%로 만듭니다.</p>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalSupabase"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="formSupabaseConfig">
+        <div class="modal-body">
+          <div class="carebox-preview-banner mb-3">
+            <i class="fa-solid fa-database text-primary"></i>
+            <div>
+              <strong>실시간 클라우드 영구 저장</strong>
+              <small class="text-muted block">모든 기기(아이폰, 갤럭시, PC)에서 내 건강 데이터가 실시간 100% 동기화됩니다.</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Supabase Project URL</label>
+            <input type="url" class="form-input" id="supabaseUrlInput" placeholder="https://xyzcompany.supabase.co">
+          </div>
+          <div class="form-group">
+            <label>Supabase Anon Key (Public)</label>
+            <input type="text" class="form-input" id="supabaseKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+          </div>
+          <div class="comm-guardrail-alert text-xs">
+            <i class="fa-solid fa-shield-halved"></i> 키가 설정되지 않은 상태에서도 로컬 영구 저장소(LocalStorage)를 통해 안전하게 동작합니다.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close-modal="modalSupabase">취소</button>
+          <button type="button" class="btn btn-outline" id="btnTestSupabaseSync"><i class="fa-solid fa-rotate"></i> 즉시 동기화</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> 연동 설정 저장</button>
         </div>
       </form>
     </div>

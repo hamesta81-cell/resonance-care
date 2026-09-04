@@ -611,6 +611,158 @@
               <!-- Dynamic Prescription Cards -->
             </div>
           </div>
+
+          <!-- ====================================================
+               RESONANCE RENEWAL: 치유사 4-Grid 진단 솔루션 & 바디 센세이션 맵 (KN-07)
+               ==================================================== -->
+          <div class="healer-diagnostic-solution-section mt-5">
+            <div class="healer-solution-card">
+              <div class="solution-card-header">
+                <div>
+                  <span class="badge-gold"><i class="fa-solid fa-heart-pulse"></i> HEALER 4-GRID DIAGNOSTIC SOLUTION</span>
+                  <h3 class="text-2xl font-bold mt-1 text-gold"><i class="fa-solid fa-user-doctor"></i> 김복선 치유사 직관 리딩 & 4-Grid 진단 솔루션</h3>
+                  <p class="text-sub text-sm mt-1">사주 오행 리듬 프로필과 대화형 바디 센세이션 맵을 융합한 프라이빗 1:1 맞춤 진단서</p>
+                </div>
+                <span class="badge-credit"><i class="fa-solid fa-shield-halved"></i> 비의료 웰니스 가드레일 준수</span>
+              </div>
+
+              <!-- Input Grid: Saju Birth + Body Sensation Map -->
+              <div class="healer-input-split-grid mt-4">
+                <!-- Left: Birth Info & Sensation Details -->
+                <div class="healer-input-col">
+                  <h4 class="text-base font-bold text-white mb-3"><i class="fa-solid fa-calendar-days text-primary"></i> 1. 기본 프로필 & 사주 오행 좌표</h4>
+                  <div class="form-group mb-3">
+                    <label class="q-label">생년월일 입력</label>
+                    <div class="birth-date-inputs">
+                      <input type="number" id="healerBirthYear" class="form-input" placeholder="년도 (예: 1985)" value="1985">
+                      <input type="number" id="healerBirthMonth" class="form-input" placeholder="월 (1~12)" value="5" min="1" max="12">
+                      <input type="number" id="healerBirthDay" class="form-input" placeholder="일 (1~31)" value="15" min="1" max="31">
+                    </div>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label class="q-label">주요 체감 감각 (Sensation Type)</label>
+                    <select id="healerSensationType" class="form-input">
+                      <option value="만성 뻐근함 및 승모근 결림">만성 뻐근함 및 승모근 결림 (목·어깨)</option>
+                      <option value="가슴 답답함 및 수면 전 상열감">가슴 답답함 및 수면 전 상열감 (심폐/자율신경)</option>
+                      <option value="복부 더부룩함 및 냉감">복부 더부룩함 및 소화 둔화 (위장/비장)</option>
+                      <option value="등/허리 묵직함 및 피로 누적">등/허리 묵직함 및 굳음 (척추/기혈)</option>
+                      <option value="하체 수족 냉증 및 오후 부종">하체 수족 냉증 및 오후 부종 (신장/수액)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="q-label">주관적 불편 강도 (VAS 0 ~ 10): <span id="lblSeverityValue" class="text-gold font-bold">7점</span></label>
+                    <input type="range" id="healerSeveritySlider" min="1" max="10" value="7" class="form-range w-full">
+                  </div>
+                </div>
+
+                <!-- Right: Interactive Body Sensation Map -->
+                <div class="healer-input-col">
+                  <h4 class="text-base font-bold text-white mb-2"><i class="fa-solid fa-child text-primary"></i> 2. 대화형 바디 센세이션 맵 (부위 선택)</h4>
+                  <p class="text-xs text-muted mb-3">몸에서 유난히 뻐근하거나 긴장된 부위를 클릭하여 활성화하세요.</p>
+                  
+                  <div class="body-sensation-buttons-grid" id="bodyRegionsContainer">
+                    <button type="button" class="body-region-btn active" data-region="neck_shoulder">
+                      <i class="fa-solid fa-circle-dot"></i> 목 · 승모근 · 어깨
+                    </button>
+                    <button type="button" class="body-region-btn" data-region="head">
+                      <i class="fa-solid fa-circle-dot"></i> 머리 / 두경부
+                    </button>
+                    <button type="button" class="body-region-btn active" data-region="abdomen">
+                      <i class="fa-solid fa-circle-dot"></i> 복부 · 소화기
+                    </button>
+                    <button type="button" class="body-region-btn" data-region="chest">
+                      <i class="fa-solid fa-circle-dot"></i> 가슴 · 흉곽
+                    </button>
+                    <button type="button" class="body-region-btn" data-region="waist_back">
+                      <i class="fa-solid fa-circle-dot"></i> 등 · 허리
+                    </button>
+                    <button type="button" class="body-region-btn" data-region="lower_limbs">
+                      <i class="fa-solid fa-circle-dot"></i> 하체 · 발목
+                    </button>
+                  </div>
+
+                  <div class="selected-regions-summary mt-3">
+                    <small class="text-muted">선택된 영역:</small>
+                    <div id="selectedRegionsBadges" class="mt-1 flex flex-wrap gap-2">
+                      <span class="badge-gold text-xs">목 · 승모근 · 어깨</span>
+                      <span class="badge-gold text-xs">복부 · 소화기</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <div class="text-center mt-4">
+                <button type="button" class="btn btn-gold btn-lg w-full" id="btnRunHealerDiagnosis">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> 김복선 치유사 4-Grid 진단 리포트 (RE:SONANCE MAP) 즉시 생성
+                </button>
+              </div>
+
+              <!-- 4-Grid Diagnosis Report Result Box -->
+              <div class="healer-4grid-result-container mt-5" id="healer4GridResultBox" style="display: none;">
+                <div class="result-report-header">
+                  <div>
+                    <span class="badge-gold"><i class="fa-solid fa-certificate"></i> OFFICIAL HEALER READING REPORT</span>
+                    <h3 class="text-2xl font-bold mt-1 text-gold">RE:SONANCE MAP 종합 진단서</h3>
+                    <p class="text-xs text-sub mt-1" id="reportGeneratedTime">발급 일시: 2026.09.04 · 전담 김복선 치유사 배정</p>
+                  </div>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="window.print()"><i class="fa-solid fa-print"></i> 리포트 인쇄</button>
+                </div>
+
+                <!-- 4-Grid Matrix Layout -->
+                <div class="grid-matrix-4box mt-4">
+                  <!-- Grid 1: Fact -->
+                  <div class="matrix-box box-fact">
+                    <div class="matrix-box-head">
+                      <span class="box-tag">GRID 1</span>
+                      <h5><i class="fa-solid fa-chart-pie text-primary"></i> Fact (객관적 사실 & 사주 오행)</h5>
+                    </div>
+                    <div class="matrix-box-content">
+                      <div class="saju-bars-preview mb-3" id="resSajuBars">
+                        <!-- Dynamic Saju Bars -->
+                      </div>
+                      <pre id="resGridFact" class="matrix-text"></pre>
+                    </div>
+                  </div>
+
+                  <!-- Grid 2: Client Report -->
+                  <div class="matrix-box box-report">
+                    <div class="matrix-box-head">
+                      <span class="box-tag">GRID 2</span>
+                      <h5><i class="fa-solid fa-child-reaching text-info"></i> Client Report (바디맵 자기보고)</h5>
+                    </div>
+                    <div class="matrix-box-content">
+                      <pre id="resGridClientReport" class="matrix-text"></pre>
+                    </div>
+                  </div>
+
+                  <!-- Grid 3: Healer Impression -->
+                  <div class="matrix-box box-healer">
+                    <div class="matrix-box-head">
+                      <span class="box-tag">GRID 3</span>
+                      <h5><i class="fa-solid fa-user-doctor text-gold"></i> Healer Impression (치유사 직관 인상)</h5>
+                    </div>
+                    <div class="matrix-box-content">
+                      <pre id="resGridHealerImpression" class="matrix-text text-gold-glow"></pre>
+                    </div>
+                  </div>
+
+                  <!-- Grid 4: Verification & 7-Day Routine -->
+                  <div class="matrix-box box-routine">
+                    <div class="matrix-box-head">
+                      <span class="box-tag">GRID 4</span>
+                      <h5><i class="fa-solid fa-calendar-check text-success"></i> 7-Day Resonance Recovery Routine</h5>
+                    </div>
+                    <div class="matrix-box-content">
+                      <pre id="resGridVerification" class="matrix-text"></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- ====================================================
@@ -1331,6 +1483,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="tcm_database.js?v=20260903_tcm"></script>
-  <script src="app.js?v=20260903_tcm_master"></script>
+  <script src="saju_healer_engine.js?v=20260904_healer"></script>
+  <script src="app.js?v=20260904_healer_master"></script>
 </body>
 </html>

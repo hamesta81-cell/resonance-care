@@ -1367,6 +1367,98 @@
     `).join('');
   }
 
+  // ==========================================
+  // RESONANCE RENEWAL: HEALER 4-GRID DIAGNOSTIC SOLUTION LOGIC (KN-07)
+  // ==========================================
+  const bodyRegionBtns = document.querySelectorAll('.body-region-btn');
+  const selectedRegionsBadges = document.getElementById('selectedRegionsBadges');
+  const severitySlider = document.getElementById('healerSeveritySlider');
+  const lblSeverity = document.getElementById('lblSeverityValue');
+
+  // Toggle Body Regions
+  bodyRegionBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active');
+      updateSelectedRegionsBadges();
+    });
+  });
+
+  function updateSelectedRegionsBadges() {
+    if (!selectedRegionsBadges) return;
+    const activeBtns = document.querySelectorAll('.body-region-btn.active');
+    if (activeBtns.length === 0) {
+      selectedRegionsBadges.innerHTML = '<span class="text-xs text-muted">선택된 부위 없음 (전신 편안함)</span>';
+      return;
+    }
+    selectedRegionsBadges.innerHTML = Array.from(activeBtns).map(b => `
+      <span class="badge-gold text-xs">${b.textContent.trim()}</span>
+    `).join('');
+  }
+
+  // Severity Slider
+  severitySlider?.addEventListener('input', (e) => {
+    if (lblSeverity) lblSeverity.textContent = `${e.target.value}점`;
+  });
+
+  // Run Healer 4-Grid Diagnosis
+  document.getElementById('btnRunHealerDiagnosis')?.addEventListener('click', () => {
+    if (!window.HEALER_DIAGNOSTIC_ENGINE) return;
+
+    const birthYear = document.getElementById('healerBirthYear')?.value || 1985;
+    const birthMonth = document.getElementById('healerBirthMonth')?.value || 5;
+    const birthDay = document.getElementById('healerBirthDay')?.value || 15;
+    const sensationType = document.getElementById('healerSensationType')?.value || '만성 뻐근함 및 결림';
+    const severity = severitySlider?.value || 7;
+
+    const activeBtns = document.querySelectorAll('.body-region-btn.active');
+    const selectedRegions = Array.from(activeBtns).map(b => b.getAttribute('data-region'));
+
+    const diag = window.HEALER_DIAGNOSTIC_ENGINE.generate4GridDiagnosis({
+      name: currentUser ? currentUser.name : '김회원',
+      birthYear,
+      birthMonth,
+      birthDay,
+      selectedRegions,
+      sensationType,
+      severity
+    });
+
+    const resultBox = document.getElementById('healer4GridResultBox');
+    const resFact = document.getElementById('resGridFact');
+    const resReport = document.getElementById('resGridClientReport');
+    const resHealer = document.getElementById('resGridHealerImpression');
+    const resRoutine = document.getElementById('resGridVerification');
+    const sajuBars = document.getElementById('resSajuBars');
+    const timeEl = document.getElementById('reportGeneratedTime');
+
+    if (resFact) resFact.textContent = diag.gridFact;
+    if (resReport) resReport.textContent = diag.gridClientReport;
+    if (resHealer) resHealer.textContent = diag.gridHealerImpression;
+    if (resRoutine) resRoutine.textContent = diag.gridVerification;
+
+    if (timeEl) {
+      const now = new Date();
+      timeEl.textContent = `발급 일시: ${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} · 전담 김복선 치유사 직관 서명 완료`;
+    }
+
+    if (sajuBars) {
+      sajuBars.innerHTML = `
+        <div class="saju-bar-item"><span>목(木)</span><strong style="color:#10B981">${diag.saju.wood}%</strong></div>
+        <div class="saju-bar-item"><span>화(火)</span><strong style="color:#EF4444">${diag.saju.fire}%</strong></div>
+        <div class="saju-bar-item"><span>토(土)</span><strong style="color:#F59E0B">${diag.saju.earth}%</strong></div>
+        <div class="saju-bar-item"><span>금(金)</span><strong style="color:#94A3B8">${diag.saju.metal}%</strong></div>
+        <div class="saju-bar-item"><span>수(水)</span><strong style="color:#38BDF8">${diag.saju.water}%</strong></div>
+      `;
+    }
+
+    if (resultBox) {
+      resultBox.style.display = 'block';
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    showToast('김복선 치유사 4-Grid 종합 진단 리포트가 성공적으로 발급되었습니다!', 'success');
+  });
+
   document.getElementById('btnOpenSupabaseModal')?.addEventListener('click', () => {
     const configStr = localStorage.getItem(SUPABASE_CONFIG_KEY);
     if (configStr) {

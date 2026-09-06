@@ -23,8 +23,8 @@
     });
 
     const particles = [];
-    const particleCount = 45;
-    const colors = ['rgba(245, 158, 11, ', 'rgba(16, 185, 129, ', 'rgba(139, 92, 246, '];
+    const particleCount = 35;
+    const colors = ['rgba(217, 119, 6, ', 'rgba(5, 150, 105, ', 'rgba(124, 58, 237, '];
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -32,7 +32,7 @@
         y: Math.random() * height,
         radius: Math.random() * 2 + 0.8,
         colorBase: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.5 + 0.2,
+        alpha: Math.random() * 0.35 + 0.15,
         speedX: (Math.random() - 0.5) * 0.35,
         speedY: (Math.random() - 0.5) * 0.35,
         pulseSpeed: Math.random() * 0.02 + 0.005,
@@ -49,15 +49,15 @@
     function renderParticles() {
       ctx.clearRect(0, 0, width, height);
 
-      // Deep space radial mesh
+      // Light Luxury radiant aura mesh
       const bgGrad1 = ctx.createRadialGradient(width * 0.2, height * 0.15, 50, width * 0.2, height * 0.15, 600);
-      bgGrad1.addColorStop(0, 'rgba(139, 92, 246, 0.12)');
+      bgGrad1.addColorStop(0, 'rgba(5, 150, 105, 0.05)');
       bgGrad1.addColorStop(1, 'transparent');
       ctx.fillStyle = bgGrad1;
       ctx.fillRect(0, 0, width, height);
 
       const bgGrad2 = ctx.createRadialGradient(width * 0.8, height * 0.3, 50, width * 0.8, height * 0.3, 550);
-      bgGrad2.addColorStop(0, 'rgba(16, 185, 129, 0.09)');
+      bgGrad2.addColorStop(0, 'rgba(217, 119, 6, 0.04)');
       bgGrad2.addColorStop(1, 'transparent');
       ctx.fillStyle = bgGrad2;
       ctx.fillRect(0, 0, width, height);

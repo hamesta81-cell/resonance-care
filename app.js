@@ -102,13 +102,16 @@
   const SUPABASE_CONFIG_KEY = 'resonance_supabase_config';
   const ADMIN_INVITES_STORAGE_KEY = 'resonance_admin_invites';
 
+  const ADMIN_MEMBERS_STORAGE_KEY = 'resonance_admin_managed_members_v2';
+
   // Sample Baseline Members for Demo & Live Management
-  const DEFAULT_MANAGED_MEMBERS = [
+  const INITIAL_MANAGED_MEMBERS = [
     {
       id: 'user_김회원_5678',
       name: '김회원',
       phone: '010-1234-5678',
       inviteCode: 'RC-2026-VIP',
+      grade: 'VIP',
       partner: '김복선 치유사',
       condition: '4점 (가뿐함)',
       lastCheckin: '오늘 09:30',
@@ -128,6 +131,7 @@
       name: '이서준',
       phone: '010-9999-8888',
       inviteCode: 'RC-VIP-8432',
+      grade: 'VIP',
       partner: '김복선 치유사',
       condition: '5점 (매우 상쾌)',
       lastCheckin: '오늘 08:20',
@@ -144,8 +148,9 @@
       id: 'user_박지현_3333',
       name: '박지현',
       phone: '010-7777-3333',
-      inviteCode: 'RC-VIP-5512',
-      partner: '김복선 치유사',
+      inviteCode: '일반 가입',
+      grade: '준회원',
+      partner: '승인 대기',
       condition: '3점 (보통)',
       lastCheckin: '어제 19:40',
       compliance: '67%',
@@ -157,6 +162,18 @@
     }
   ];
 
+  function getManagedMembers() {
+    try {
+      const saved = localStorage.getItem(ADMIN_MEMBERS_STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return [...INITIAL_MANAGED_MEMBERS];
+  }
+
+  function saveManagedMembers(members) {
+    localStorage.setItem(ADMIN_MEMBERS_STORAGE_KEY, JSON.stringify(members));
+  }
+
   function getAdminInvites() {
     try {
       const saved = localStorage.getItem(ADMIN_INVITES_STORAGE_KEY);
@@ -165,7 +182,7 @@
     return [
       { code: 'RC-2026-VIP', target: '공식 마스터 초대권', partner: '김복선 치유사', status: '무제한 활성' },
       { code: 'RC-VIP-8432', target: '이서준 회원 초대', partner: '김복선 치유사', status: '사용 완료 (이서준)' },
-      { code: 'RC-VIP-5512', target: '박지현 회원 초대', partner: '김복선 치유사', status: '사용 완료 (박지현)' }
+      { code: 'RC-VIP-5512', target: '박지현 회원 초대', partner: '김복선 치유사', status: '발급 활성' }
     ];
   }
 
@@ -548,60 +565,74 @@
   // ==========================================
   document.getElementById('formJoin')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const code = document.getElementById('joinInviteCode').value.trim();
-    const name = document.getElementById('joinUserName').value.trim();
-    const phone = document.getElementById('joinUserPhone').value.trim();
+    const code = document.getElementById('joinInviteCode')?.value.trim();
+    const name = document.getElementById('joinUserName')?.value.trim();
+    const phone = document.getElementById('joinUserPhone')?.value.trim();
 
-    if (!code || !name || !phone) return;
+    if (!name || !phone) return;
 
-    // Strict Invite Code Verification
-    const invites = getAdminInvites();
-    const matchedInvite = invites.find(inv => inv.code.toUpperCase() === code.toUpperCase());
+    let userGrade = '준회원';
+    let assignedPartner = '승인 대기';
+    let inviteCodeUsed = code || '일반 가입';
 
-    if (!matchedInvite) {
-      alert(`[가입 불가] 유효하지 않은 초대 코드입니다.\n관리자 또는 전담 치유사에게 발급받은 정식 초대 코드를 입력해주세요.`);
-      return;
-    }
+    if (code) {
+      const invites = getAdminInvites();
+      const matchedInvite = invites.find(inv => inv.code.toUpperCase() === code.toUpperCase());
 
-    if (matchedInvite.status === '사용 완료' || matchedInvite.status.includes('사용 완료')) {
-      alert(`[가입 불가] 이미 사용이 완료된 초대 코드입니다.\n리조넌스 프라이빗 VIP 초대권은 1인 1회 한정으로 사용 가능합니다.`);
-      return;
-    }
-
-    // Mark as used if not the master code
-    if (matchedInvite.code !== 'RC-2026-VIP') {
-      matchedInvite.status = `사용 완료 (${name})`;
-      saveAdminInvites(invites);
+      if (!matchedInvite) {
+        alert(`[알림] 입력하신 초대 코드 [${code}] 는 등록되지 않은 코드입니다.\n초대 코드 없이 '준회원'으로 가입을 진행합니다. 관리자 승인 후 정회원으로 전환됩니다.`);
+        inviteCodeUsed = `${code} (미확인 코드)`;
+      } else if (matchedInvite.status === '사용 완료' || matchedInvite.status.includes('사용 완료')) {
+        alert(`[알림] 이미 사용 완료된 초대 코드입니다.\n'준회원'으로 가입을 진행하며, 관리자 확인 후 정회원으로 승인됩니다.`);
+        inviteCodeUsed = `${code} (만료 코드)`;
+      } else {
+        // Valid VIP Invite Code
+        userGrade = 'VIP';
+        assignedPartner = matchedInvite.partner || '김복선 치유사';
+        inviteCodeUsed = matchedInvite.code;
+        if (matchedInvite.code !== 'RC-2026-VIP') {
+          matchedInvite.status = `사용 완료 (${name})`;
+          saveAdminInvites(invites);
+        }
+      }
     }
 
     const newUser = {
       id: `user_${Date.now()}`,
       name,
       phone,
-      inviteCode: matchedInvite.code,
+      inviteCode: inviteCodeUsed,
       joinedAt: new Date().toISOString().slice(0, 10),
-      grade: 'VIP',
-      assignedPartner: matchedInvite.partner || '김복선 치유사'
+      grade: userGrade,
+      assignedPartner: assignedPartner
     };
 
-    // Add to managed members list for real-time admin sync
-    DEFAULT_MANAGED_MEMBERS.unshift({
+    // Add to managed members list
+    const managedMembers = getManagedMembers();
+    managedMembers.unshift({
       id: newUser.id,
       name: newUser.name,
       phone: newUser.phone,
       inviteCode: newUser.inviteCode,
+      grade: newUser.grade,
       partner: newUser.assignedPartner,
-      condition: '4점 (가뿐함)',
+      condition: userGrade === 'VIP' ? '4점 (가뿐함)' : '미측정 (승인 대기)',
       lastCheckin: '방금 가입',
-      compliance: '100%',
+      compliance: userGrade === 'VIP' ? '100%' : '0%',
       careboxClaimed: false,
       checkins: [],
       messages: []
     });
+    saveManagedMembers(managedMembers);
 
     saveAuth(newUser);
     closeModal('modalJoin');
-    showToast(`환영합니다, ${name} 님! V2 정회원(VIP) 가입이 완료되었습니다. (초대권 사용 완료)`, 'success');
+    
+    if (userGrade === 'VIP') {
+      showToast(`환영합니다, ${name} 님! VIP 정회원 가입이 완료되었습니다!`, 'success');
+    } else {
+      showToast(`환영합니다, ${name} 님! 준회원 가입이 완료되었습니다. 관리자 승인 후 VIP 혜택이 전체 오픈됩니다.`, 'info');
+    }
   });
 
   document.getElementById('formLogin')?.addEventListener('submit', (e) => {
@@ -611,17 +642,23 @@
 
     if (!name || !phone) return;
 
+    // Check existing managed member grade
+    const managedMembers = getManagedMembers();
+    const existing = managedMembers.find(m => m.name === name || m.phone === phone);
+    const userGrade = existing ? (existing.grade || '준회원') : 'VIP';
+    const assignedPartner = existing ? (existing.partner || '김복선 치유사') : '김복선 치유사';
+
     const user = {
-      id: `user_${name}_${phone.slice(-4)}`,
+      id: existing ? existing.id : `user_${name}_${phone.slice(-4)}`,
       name,
       phone,
-      grade: 'VIP',
-      assignedPartner: '김복선 치유사'
+      grade: userGrade,
+      assignedPartner: assignedPartner
     };
 
     saveAuth(user);
     closeModal('modalLogin');
-    showToast(`${name} 님, 로그인되었습니다.`, 'success');
+    showToast(`${name} 님, 로그인되었습니다. (${userGrade})`, 'success');
   });
 
   document.getElementById('btnNavLogout')?.addEventListener('click', () => {
@@ -1070,11 +1107,45 @@
   function renderMemberView() {
     if (!currentUser || !userData) return;
 
-    // Greeting
+    const isRegularMember = (currentUser.grade === 'VIP' || currentUser.grade === '정회원');
+
+    // Pending Approval Banner Control
+    const pendingBanner = document.getElementById('pendingApprovalBanner');
+    if (pendingBanner) {
+      pendingBanner.style.display = isRegularMember ? 'none' : 'block';
+    }
+
+    // Greeting & Status Pill
     const gName = document.getElementById('mbGreetingName');
     const gPartner = document.getElementById('mbGreetingPartner');
+    const gradeBadge = document.getElementById('mbMembershipGrade');
+    const topCredit = document.getElementById('mbTopCreditBadge');
+
     if (gName) gName.textContent = `${currentUser.name} 님`;
-    if (gPartner) gPartner.textContent = `전담 케어: 김복선 치유사 배정됨`;
+    
+    if (isRegularMember) {
+      if (gPartner) gPartner.textContent = `전담 케어: ${currentUser.assignedPartner || '김복선 치유사'} 배정됨`;
+      if (gradeBadge) {
+        gradeBadge.className = 'badge-gold';
+        gradeBadge.innerHTML = '<i class="fa-solid fa-crown"></i> VIP 정회원';
+      }
+      if (topCredit) {
+        topCredit.className = 'badge-credit';
+        topCredit.innerHTML = `<i class="fa-solid fa-coins"></i> ${(userData.wallet?.credit || 50000).toLocaleString()} P`;
+      }
+    } else {
+      if (gPartner) gPartner.textContent = `전담 케어: 정회원 승인 심사 대기 중`;
+      if (gradeBadge) {
+        gradeBadge.className = 'badge-active';
+        gradeBadge.style.cssText = 'background:#FEF3C7; color:#B45309; border:1px solid #F59E0B;';
+        gradeBadge.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> 준회원 (승인 대기)';
+      }
+      if (topCredit) {
+        topCredit.className = 'badge-credit';
+        topCredit.style.cssText = 'background:#F1F5F9; color:#64748B; border:1px solid #CBD5E1;';
+        topCredit.innerHTML = `<i class="fa-solid fa-lock"></i> 승인 후 50,000 P 지급`;
+      }
+    }
 
     // Today Checkin Status
     const tag = document.getElementById('lblTodayStatusTag');
@@ -1085,26 +1156,29 @@
     if (userData.todayCheckedIn && userData.todayCheckinData) {
       if (tag) { tag.className = 'check-status-tag done'; tag.textContent = '작성완료'; }
       if (btnText) btnText.textContent = '오늘 상태 체크 수정하기';
-      if (ackTitle) ackTitle.textContent = '오늘 기록 확인 진행중';
-      if (ackText) ackText.textContent = `오늘 ${userData.todayCheckinData.submittedAt || ''}에 기록을 완료하셨습니다. 김복선 치유사가 세심하게 확인합니다.`;
+      if (ackTitle) ackTitle.textContent = isRegularMember ? '오늘 기록 확인 진행중' : '기록 제출 완료';
+      if (ackText) ackText.textContent = `오늘 ${userData.todayCheckinData.submittedAt || ''}에 기록을 완료하셨습니다. ${isRegularMember ? '김복선 치유사가 세심하게 확인합니다.' : '관리자 정회원 승인 후 맞춤 피드백이 제공됩니다.'}`;
     } else {
       if (tag) { tag.className = 'check-status-tag'; tag.textContent = '미작성'; }
       if (btnText) btnText.textContent = '지금 상태 체크 작성하기';
-      if (ackTitle) ackTitle.textContent = '김복선 치유사 케어 브리핑';
-      if (ackText) ackText.textContent = '오늘의 상태 체크를 남기시면 맞춤 일일 생활 피드백이 브리핑됩니다.';
+      if (ackTitle) ackTitle.textContent = isRegularMember ? '김복선 치유사 케어 브리핑' : '1분 상태 체크 작성';
+      if (ackText) ackText.textContent = isRegularMember ? '오늘의 상태 체크를 남기시면 맞춤 일일 생활 피드백이 브리핑됩니다.' : '상태 체크를 남겨두시면 정회원 승인 시 첫 리포트에 반영됩니다.';
     }
 
     // VIP Wallet Status
-    const topCredit = document.getElementById('mbTopCreditBadge');
     const walletCredit = document.getElementById('lblWalletCreditVal');
     const walletUser = document.getElementById('lblWalletUserName');
     const careboxStatus = document.getElementById('lblCareboxStatusText');
 
-    if (topCredit) topCredit.innerHTML = `<i class="fa-solid fa-coins"></i> ${userData.wallet.credit.toLocaleString()} P`;
-    if (walletCredit) walletCredit.textContent = `${userData.wallet.credit.toLocaleString()} P`;
+    if (walletCredit) {
+      walletCredit.textContent = isRegularMember ? `${(userData.wallet?.credit || 50000).toLocaleString()} P` : '0 P (승인 대기)';
+    }
     if (walletUser) walletUser.textContent = `${currentUser.name} 님의 케어 지갑`;
     if (careboxStatus) {
-      if (userData.wallet.careboxClaimed) {
+      if (!isRegularMember) {
+        careboxStatus.textContent = '정회원 승인 후 신청 가능';
+        careboxStatus.className = 'text-muted';
+      } else if (userData.wallet?.careboxClaimed) {
         careboxStatus.textContent = '신청 완료 (배송 준비중)';
         careboxStatus.className = 'text-gold';
       } else {
@@ -1113,12 +1187,46 @@
       }
     }
 
+    // Apply grade lock restrictions to premium UI sections
+    applyMemberGradeRestrictions(isRegularMember);
+
     renderCarePlanTasks();
     renderTimeline();
     renderHerbsDictionary();
     renderAcupoints();
     renderSasangEncyclopedia();
     renderPrescriptionsEncyclopedia();
+  }
+
+  function applyMemberGradeRestrictions(isRegularMember) {
+    const healerCard = document.querySelector('.healer-solution-card');
+    const tcmCard = document.querySelector('.tcm-analyzer-card');
+    const carePlanCard = document.querySelector('.care-plan-card');
+
+    [healerCard, tcmCard, carePlanCard].forEach(card => {
+      if (!card) return;
+      const existingLock = card.querySelector('.vip-locked-banner');
+      if (isRegularMember) {
+        if (existingLock) existingLock.remove();
+        card.style.filter = 'none';
+        card.style.pointerEvents = 'auto';
+        card.style.opacity = '1';
+      } else {
+        if (!existingLock) {
+          const lockBanner = document.createElement('div');
+          lockBanner.className = 'vip-locked-banner';
+          lockBanner.style.cssText = 'background:rgba(255,251,235,0.95); border:1px solid #F59E0B; border-radius:14px; padding:20px; text-align:center; margin-bottom:16px; box-shadow:0 4px 14px rgba(217,119,6,0.1);';
+          lockBanner.innerHTML = `
+            <div style="font-size:28px; color:#D97706; margin-bottom:8px;"><i class="fa-solid fa-lock"></i></div>
+            <h4 style="color:#92400E; font-size:15px; font-weight:800; margin-bottom:4px;">정회원(VIP) 전용 프리미엄 솔루션</h4>
+            <p style="color:#78350F; font-size:12px; margin:0; line-height:1.5;">
+              현재 <strong>준회원 승인 대기</strong> 상태입니다. 관리자가 정회원으로 승인하면 본 솔루션과 맞춤 처방 분석이 즉시 해제됩니다.
+            </p>
+          `;
+          card.insertBefore(lockBanner, card.firstChild);
+        }
+      }
+    });
   }
 
   function renderTimeline() {
@@ -1686,35 +1794,58 @@
   });
 
   function renderAdminDashboard() {
+    const members = getManagedMembers();
+    const pendingMembers = members.filter(m => m.grade === '준회원');
+
     // 1. KPI Stats
     const totalMembersEl = document.getElementById('kpiTotalMembers');
-    if (totalMembersEl) totalMembersEl.textContent = `${DEFAULT_MANAGED_MEMBERS.length}명`;
+    if (totalMembersEl) totalMembersEl.textContent = `${members.length}명`;
+
+    const pendingCountEl = document.getElementById('kpiPendingApprovalCount');
+    if (pendingCountEl) pendingCountEl.textContent = `${pendingMembers.length}명`;
 
     // 2. Members Table
     const tbody = document.getElementById('adminMembersTableBody');
     if (tbody) {
-      tbody.innerHTML = DEFAULT_MANAGED_MEMBERS.map(m => `
-        <tr>
-          <td><strong>${m.name}</strong> <span class="v2-pill">VIP</span></td>
-          <td>${m.phone}</td>
-          <td><code>${m.inviteCode}</code></td>
-          <td><i class="fa-solid fa-user-doctor text-primary"></i> ${m.partner}</td>
-          <td><span class="badge-active">${m.condition}</span></td>
-          <td><small class="text-muted">${m.lastCheckin}</small></td>
-          <td>
-            <button class="btn btn-outline btn-xs" onclick="window.viewAdminMember('${m.id}')">
-              <i class="fa-solid fa-magnifying-glass-chart"></i> 차트 상세
+      tbody.innerHTML = members.map(m => {
+        const isApproved = (m.grade === 'VIP' || m.grade === '정회원');
+        const gradeBadge = isApproved
+          ? `<span class="badge-gold"><i class="fa-solid fa-crown"></i> VIP 정회원</span>`
+          : `<span class="badge-active" style="background:#FEF3C7; color:#B45309; border:1px solid #F59E0B;"><i class="fa-solid fa-hourglass-half"></i> 준회원</span>`;
+
+        const actionBtns = isApproved
+          ? `
+            <button class="btn btn-outline btn-xs" onclick="window.viewAdminMember('${m.id}')" title="차트 상세">
+              <i class="fa-solid fa-magnifying-glass-chart"></i> 차트
             </button>
-          </td>
-        </tr>
-      `).join('');
+            <button class="btn btn-outline btn-xs text-danger" onclick="window.revokeMember('${m.id}')" title="준회원으로 전환">
+              <i class="fa-solid fa-user-xmark"></i>
+            </button>
+          `
+          : `
+            <button class="btn btn-primary btn-xs" onclick="window.approveMember('${m.id}')">
+              <i class="fa-solid fa-user-check"></i> 정회원 승인
+            </button>
+          `;
+
+        return `
+          <tr>
+            <td><strong>${m.name}</strong></td>
+            <td>${m.phone}</td>
+            <td>${gradeBadge}</td>
+            <td><i class="fa-solid fa-user-doctor text-primary"></i> ${m.partner}</td>
+            <td><span class="${isApproved ? 'badge-active' : 'tag-badge'}">${m.condition}</span></td>
+            <td>${actionBtns}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     // 3. Rounding Queue
     const queueList = document.getElementById('adminRoundingQueueList');
     if (queueList) {
-      queueList.innerHTML = DEFAULT_MANAGED_MEMBERS.map(m => {
-        const latestCheck = m.checkins[0];
+      queueList.innerHTML = members.map(m => {
+        const latestCheck = m.checkins && m.checkins[0];
         if (!latestCheck) return '';
         return `
           <div class="rounding-queue-card">
@@ -1743,28 +1874,56 @@
     renderAdminInvitesTable();
   }
 
-  function renderAdminInvitesTable() {
-    const tbody = document.getElementById('adminInvitesTableBody');
-    if (!tbody) return;
-    const invites = getAdminInvites();
-    tbody.innerHTML = invites.map(inv => `
-      <tr>
-        <td><code>${inv.code}</code></td>
-        <td>${inv.target}</td>
-        <td>${inv.partner}</td>
-        <td><span class="${inv.status.includes('활성') ? 'badge-active' : 'tag-badge'}">${inv.status}</span></td>
-        <td>
-          <button class="btn btn-outline btn-xs" onclick="navigator.clipboard.writeText('${inv.code}'); alert('${inv.code} 코드가 클립보드에 복사되었습니다.');">
-            <i class="fa-solid fa-copy"></i> 복사
-          </button>
-        </td>
-      </tr>
-    `).join('');
-  }
+  // Member Approval & Revocation Global Functions
+  window.approveMember = function(memberId) {
+    const members = getManagedMembers();
+    const target = members.find(m => m.id === memberId);
+    if (!target) return;
+
+    target.grade = 'VIP';
+    target.partner = '김복선 치유사';
+    target.condition = '4점 (가뿐함)';
+    saveManagedMembers(members);
+
+    // If currently logged in user is this user, update active session
+    if (currentUser && currentUser.id === memberId) {
+      currentUser.grade = 'VIP';
+      currentUser.assignedPartner = '김복선 치유사';
+      if (userData && userData.wallet) {
+        userData.wallet.credit = userData.wallet.credit || 50000;
+      }
+      saveAuth(currentUser);
+      saveUserData();
+    }
+
+    renderAdminDashboard();
+    showToast(`${target.name} 님이 정회원(VIP)으로 정식 승인되었습니다! 모든 프리미엄 정보가 해제되었습니다.`, 'success');
+  };
+
+  window.revokeMember = function(memberId) {
+    if (!confirm('정말 준회원으로 변경하시겠습니까? 프리미엄 솔루션 조회가 다시 잠금 처리됩니다.')) return;
+    const members = getManagedMembers();
+    const target = members.find(m => m.id === memberId);
+    if (!target) return;
+
+    target.grade = '준회원';
+    target.partner = '승인 대기';
+    saveManagedMembers(members);
+
+    if (currentUser && currentUser.id === memberId) {
+      currentUser.grade = '준회원';
+      currentUser.assignedPartner = '승인 대기';
+      saveAuth(currentUser);
+    }
+
+    renderAdminDashboard();
+    showToast(`${target.name} 님이 준회원으로 변경되었습니다.`, 'info');
+  };
 
   // Window Global Helpers for Admin
   window.viewAdminMember = function(memberId) {
-    const member = DEFAULT_MANAGED_MEMBERS.find(m => m.id === memberId);
+    const members = getManagedMembers();
+    const member = members.find(m => m.id === memberId);
     if (!member) return;
 
     document.getElementById('admModalMemberName').innerHTML = `<i class="fa-solid fa-user-check text-primary"></i> ${member.name} 님 웰니스 종합 차트`;

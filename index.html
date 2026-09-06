@@ -213,6 +213,24 @@
           </div>
         </div>
 
+        <!-- Dynamic Pending Approval Banner for Associate Members -->
+        <div id="pendingApprovalBanner" style="display:none; background:#FFFBEB; border:1px solid #F59E0B; border-radius:var(--radius-md); padding:16px 20px; box-shadow:var(--shadow-sm);">
+          <div style="display:flex; align-items:flex-start; gap:14px;">
+            <div style="width:36px; height:36px; border-radius:50%; background:#FEF3C7; color:#D97706; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">
+              <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+            <div style="flex:1;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <h4 style="color:#92400E; font-size:14px; font-weight:800; margin:0;">정회원(VIP) 승인 심사 대기 중</h4>
+                <span class="badge-gold" style="font-size:10px;">관리자 승인 대기</span>
+              </div>
+              <p style="color:#78350F; font-size:12px; margin:0; line-height:1.5;">
+                현재 <strong>준회원</strong> 상태입니다. 관리자가 정회원으로 승인하면 <strong>김복선 치유사 직관 4-Grid 진단 솔루션, 7일 케어 플랜, 1:1 상담 및 50,000 P 크레딧</strong>이 전체 해제됩니다. (일반 건강정보와 커뮤니티는 자유롭게 열람 가능합니다)
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- 5 MAIN V2 TABS -->
         <div class="member-tab-nav v2-tab-nav">
           <button class="m-tab-btn active" data-target="m-tab-today"><i class="fa-solid fa-calendar-day"></i> 오늘</button>
@@ -879,12 +897,20 @@
         </div>
 
         <!-- KPI Summary Cards -->
+        <!-- KPI Summary Cards -->
         <div class="admin-kpi-grid">
           <div class="kpi-card">
             <div class="kpi-icon text-primary"><i class="fa-solid fa-users"></i></div>
             <div class="kpi-info">
-              <small>총 등록 VIP 회원</small>
+              <small>총 등록 회원</small>
               <strong id="kpiTotalMembers">3명</strong>
+            </div>
+          </div>
+          <div class="kpi-card" style="border:1px solid #F59E0B; background:#FFFBEB;">
+            <div class="kpi-icon text-gold" style="background:#FEF3C7; color:#D97706;"><i class="fa-solid fa-user-clock"></i></div>
+            <div class="kpi-info">
+              <small style="color:#92400E; font-weight:700;">승인 대기 준회원</small>
+              <strong id="kpiPendingApprovalCount" style="color:#D97706;">0명</strong>
             </div>
           </div>
           <div class="kpi-card">
@@ -901,18 +927,11 @@
               <strong id="kpiPlanCompliance">82%</strong>
             </div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-icon text-danger"><i class="fa-solid fa-gift"></i></div>
-            <div class="kpi-info">
-              <small>케어박스 신청 대기</small>
-              <strong id="kpiCareboxPending">1건</strong>
-            </div>
-          </div>
         </div>
 
         <!-- Admin Sub-Navigation Tabs -->
         <div class="admin-tab-nav">
-          <button class="admin-tab-btn active" data-admin-tab="adm-members"><i class="fa-solid fa-users-gear"></i> 전체 회원 관리 (AD-02)</button>
+          <button class="admin-tab-btn active" data-admin-tab="adm-members"><i class="fa-solid fa-users-gear"></i> 전체 회원 관리 & 승인 (AD-02)</button>
           <button class="admin-tab-btn" data-admin-tab="adm-rounding"><i class="fa-solid fa-stethoscope"></i> 김복선 치유사 라운딩 큐 (CP-01)</button>
           <button class="admin-tab-btn" data-admin-tab="adm-invites"><i class="fa-solid fa-ticket"></i> VIP 초대권 발급 (AD-03)</button>
           <button class="admin-tab-btn" data-admin-tab="adm-settings"><i class="fa-solid fa-sliders"></i> 공지 & 생중계 설정 (AD-04)</button>
@@ -923,8 +942,8 @@
           <div class="admin-panel-card">
             <div class="panel-header-flex">
               <div>
-                <h3><i class="fa-solid fa-user-group text-primary"></i> VIP 회원 명단 및 건강 상태</h3>
-                <small class="text-muted">실시간 중앙 서버에 동기화된 회원 목록과 데일리 컨디션</small>
+                <h3><i class="fa-solid fa-user-group text-primary"></i> 회원 명단 및 정회원 승인 관리</h3>
+                <small class="text-muted">가입된 준회원을 원클릭으로 정회원(VIP) 승인하고 전담 치유사를 배정합니다.</small>
               </div>
               <button class="btn btn-outline btn-sm" id="btnRefreshAdminMembers"><i class="fa-solid fa-rotate"></i> 새로고침</button>
             </div>
@@ -934,11 +953,10 @@
                   <tr>
                     <th>회원 성명</th>
                     <th>연락처</th>
-                    <th>초대 코드</th>
+                    <th>회원 등급</th>
                     <th>전담 치유사</th>
                     <th>오늘 컨디션</th>
-                    <th>최근 상태 체크</th>
-                    <th>관리</th>
+                    <th>승인 및 관리 액션</th>
                   </tr>
                 </thead>
                 <tbody id="adminMembersTableBody">
@@ -1254,21 +1272,20 @@
     </div>
   </div>
 
-  <!-- MODAL: JOIN (초대 가입) -->
+  <!-- MODAL: JOIN (누구나 회원가입) -->
   <div class="app-modal-overlay" id="modalJoin">
     <div class="app-modal-dialog">
       <div class="modal-header">
         <div>
-          <h3><i class="fa-solid fa-envelope-open-text"></i> 초대 코드 회원가입</h3>
-          <p class="modal-sub">발급받으신 초대 코드를 입력하여 프라이빗 회원으로 등록합니다.</p>
+          <h3><i class="fa-solid fa-user-plus text-primary"></i> 리조넌스 회원가입</h3>
+          <p class="modal-sub">누구나 간편하게 가입하실 수 있습니다. 관리자 승인 후 정회원 혜택이 활성화됩니다.</p>
         </div>
         <button class="modal-close-btn" data-close-modal="modalJoin"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="formJoin">
         <div class="modal-body">
-          <div class="form-group">
-            <label>초대 코드</label>
-            <input type="text" class="form-input" id="joinInviteCode" placeholder="예: RC-2026-VIP" required>
+          <div class="comm-guardrail-alert text-xs mb-3" style="background:#EFF6FF; border:1px solid #BFDBFE; color:#1E40AF;">
+            <i class="fa-solid fa-circle-info"></i> <strong>안내:</strong> 가입 즉시 준회원으로 입장되며, 관리자가 정회원으로 승인하면 프리미엄 웰니스 차트와 맞춤 치유 솔루션이 전체 오픈됩니다.
           </div>
           <div class="form-group">
             <label>성명</label>
@@ -1277,6 +1294,10 @@
           <div class="form-group">
             <label>연락처 (휴대폰 번호)</label>
             <input type="tel" class="form-input" id="joinUserPhone" placeholder="010-0000-0000" required>
+          </div>
+          <div class="form-group">
+            <label>추천인 / 초대 코드 <small class="text-muted">(선택 사항 - 없으시면 비워두셔도 됩니다)</small></label>
+            <input type="text" class="form-input" id="joinInviteCode" placeholder="보유하신 코드가 있다면 입력하세요">
           </div>
           <div class="checkbox-group mt-2">
             <label class="custom-checkbox-label">
@@ -1287,7 +1308,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" data-close-modal="modalJoin">취소</button>
-          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> 가입 완료 및 입장</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> 간편 회원가입 완료</button>
         </div>
       </form>
     </div>
@@ -1496,6 +1517,6 @@
 
   <script src="tcm_database.js?v=20260903_tcm"></script>
   <script src="saju_healer_engine.js?v=20260904_healer"></script>
-  <script src="app.js?v=20260906_invite_strict"></script>
+  <script src="app.js?v=20260906_open_approval"></script>
 </body>
 </html>

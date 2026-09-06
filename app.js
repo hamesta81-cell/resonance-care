@@ -100,6 +100,78 @@
   const AUTH_KEY = 'resonance_auth_user_v2';
   const DATA_KEY_PREFIX = 'resonance_v2_data_';
   const SUPABASE_CONFIG_KEY = 'resonance_supabase_config';
+  const ADMIN_INVITES_STORAGE_KEY = 'resonance_admin_invites';
+
+  // Sample Baseline Members for Demo & Live Management
+  const DEFAULT_MANAGED_MEMBERS = [
+    {
+      id: 'user_김회원_5678',
+      name: '김회원',
+      phone: '010-1234-5678',
+      inviteCode: 'RC-2026-VIP',
+      partner: '김복선 치유사',
+      condition: '4점 (가뿐함)',
+      lastCheckin: '오늘 09:30',
+      compliance: '85%',
+      careboxClaimed: true,
+      checkins: [
+        { date: '2026-09-02', condition: 4, sleep: 4, mind: 4, discomfort: 2, memo: '아침에 미온수를 마시니 몸이 가뿐합니다.', submittedAt: '09:30' },
+        { date: '2026-09-01', condition: 3, sleep: 3, mind: 3, discomfort: 4, memo: '목 어깨가 조금 뻐근했습니다.', submittedAt: '21:10' }
+      ],
+      messages: [
+        { sender: 'member', text: '치유사님, 오늘 목 어깨 스트레칭 호흡법 따라하니 한결 시원하네요!', time: '10:15' },
+        { sender: 'partner', text: '김회원님 참 잘하셨습니다! 오늘 저녁 20시 세션에서도 이완 호흡 함께하겠습니다.', time: '10:20' }
+      ]
+    },
+    {
+      id: 'user_이서준_8888',
+      name: '이서준',
+      phone: '010-9999-8888',
+      inviteCode: 'RC-VIP-8432',
+      partner: '김복선 치유사',
+      condition: '5점 (매우 상쾌)',
+      lastCheckin: '오늘 08:20',
+      compliance: '100%',
+      careboxClaimed: true,
+      checkins: [
+        { date: '2026-09-02', condition: 5, sleep: 5, mind: 5, discomfort: 1, memo: '당귀 침출차 마시고 7시간 숙면 취했습니다.', submittedAt: '08:20' }
+      ],
+      messages: [
+        { sender: 'partner', text: '이서준님, 수면 개선 목표가 순조롭게 달성되고 있습니다. 훌륭합니다.', time: '08:30' }
+      ]
+    },
+    {
+      id: 'user_박지현_3333',
+      name: '박지현',
+      phone: '010-7777-3333',
+      inviteCode: 'RC-VIP-5512',
+      partner: '김복선 치유사',
+      condition: '3점 (보통)',
+      lastCheckin: '어제 19:40',
+      compliance: '67%',
+      careboxClaimed: false,
+      checkins: [
+        { date: '2026-09-01', condition: 3, sleep: 4, mind: 3, discomfort: 3, memo: '가을 케어박스 신청 완료했습니다.', submittedAt: '19:40' }
+      ],
+      messages: []
+    }
+  ];
+
+  function getAdminInvites() {
+    try {
+      const saved = localStorage.getItem(ADMIN_INVITES_STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return [
+      { code: 'RC-2026-VIP', target: '공식 마스터 초대권', partner: '김복선 치유사', status: '무제한 활성' },
+      { code: 'RC-VIP-8432', target: '이서준 회원 초대', partner: '김복선 치유사', status: '사용 완료 (이서준)' },
+      { code: 'RC-VIP-5512', target: '박지현 회원 초대', partner: '김복선 치유사', status: '사용 완료 (박지현)' }
+    ];
+  }
+
+  function saveAdminInvites(invites) {
+    localStorage.setItem(ADMIN_INVITES_STORAGE_KEY, JSON.stringify(invites));
+  }
 
   // Default Auto-Connected Supabase Project
   const DEFAULT_SUPABASE_CONFIG = {
@@ -482,19 +554,54 @@
 
     if (!code || !name || !phone) return;
 
+    // Strict Invite Code Verification
+    const invites = getAdminInvites();
+    const matchedInvite = invites.find(inv => inv.code.toUpperCase() === code.toUpperCase());
+
+    if (!matchedInvite) {
+      alert(`[가입 불가] 유효하지 않은 초대 코드입니다.\n관리자 또는 전담 치유사에게 발급받은 정식 초대 코드를 입력해주세요.`);
+      return;
+    }
+
+    if (matchedInvite.status === '사용 완료' || matchedInvite.status.includes('사용 완료')) {
+      alert(`[가입 불가] 이미 사용이 완료된 초대 코드입니다.\n리조넌스 프라이빗 VIP 초대권은 1인 1회 한정으로 사용 가능합니다.`);
+      return;
+    }
+
+    // Mark as used if not the master code
+    if (matchedInvite.code !== 'RC-2026-VIP') {
+      matchedInvite.status = `사용 완료 (${name})`;
+      saveAdminInvites(invites);
+    }
+
     const newUser = {
       id: `user_${Date.now()}`,
       name,
       phone,
-      inviteCode: code,
+      inviteCode: matchedInvite.code,
       joinedAt: new Date().toISOString().slice(0, 10),
       grade: 'VIP',
-      assignedPartner: '김복선 치유사'
+      assignedPartner: matchedInvite.partner || '김복선 치유사'
     };
+
+    // Add to managed members list for real-time admin sync
+    DEFAULT_MANAGED_MEMBERS.unshift({
+      id: newUser.id,
+      name: newUser.name,
+      phone: newUser.phone,
+      inviteCode: newUser.inviteCode,
+      partner: newUser.assignedPartner,
+      condition: '4점 (가뿐함)',
+      lastCheckin: '방금 가입',
+      compliance: '100%',
+      careboxClaimed: false,
+      checkins: [],
+      messages: []
+    });
 
     saveAuth(newUser);
     closeModal('modalJoin');
-    showToast(`환영합니다, ${name} 님! V2 프라이빗 회원 가입이 완료되었습니다.`, 'success');
+    showToast(`환영합니다, ${name} 님! V2 정회원(VIP) 가입이 완료되었습니다. (초대권 사용 완료)`, 'success');
   });
 
   document.getElementById('formLogin')?.addEventListener('submit', (e) => {
@@ -1531,78 +1638,7 @@
   // ==========================================
   let isAdminAuthenticated = false;
   const ADMIN_PASSWORDS = ['admin1234', 'resonance2026'];
-  const ADMIN_INVITES_STORAGE_KEY = 'resonance_admin_invites';
 
-  // Sample Baseline Members for Demo & Live Management
-  const DEFAULT_MANAGED_MEMBERS = [
-    {
-      id: 'user_김회원_5678',
-      name: '김회원',
-      phone: '010-1234-5678',
-      inviteCode: 'RC-2026-VIP',
-      partner: '김복선 치유사',
-      condition: '4점 (가뿐함)',
-      lastCheckin: '오늘 09:30',
-      compliance: '85%',
-      careboxClaimed: true,
-      checkins: [
-        { date: '2026-09-02', condition: 4, sleep: 4, mind: 4, discomfort: 2, memo: '아침에 미온수를 마시니 몸이 가뿐합니다.', submittedAt: '09:30' },
-        { date: '2026-09-01', condition: 3, sleep: 3, mind: 3, discomfort: 4, memo: '목 어깨가 조금 뻐근했습니다.', submittedAt: '21:10' }
-      ],
-      messages: [
-        { sender: 'member', text: '치유사님, 오늘 목 어깨 스트레칭 호흡법 따라하니 한결 시원하네요!', time: '10:15' },
-        { sender: 'partner', text: '김회원님 참 잘하셨습니다! 오늘 저녁 20시 세션에서도 이완 호흡 함께하겠습니다.', time: '10:20' }
-      ]
-    },
-    {
-      id: 'user_이서준_8888',
-      name: '이서준',
-      phone: '010-9999-8888',
-      inviteCode: 'RC-VIP-8432',
-      partner: '김복선 치유사',
-      condition: '5점 (매우 상쾌)',
-      lastCheckin: '오늘 08:20',
-      compliance: '100%',
-      careboxClaimed: true,
-      checkins: [
-        { date: '2026-09-02', condition: 5, sleep: 5, mind: 5, discomfort: 1, memo: '당귀 침출차 마시고 7시간 숙면 취했습니다.', submittedAt: '08:20' }
-      ],
-      messages: [
-        { sender: 'partner', text: '이서준님, 수면 개선 목표가 순조롭게 달성되고 있습니다. 훌륭합니다.', time: '08:30' }
-      ]
-    },
-    {
-      id: 'user_박지현_3333',
-      name: '박지현',
-      phone: '010-7777-3333',
-      inviteCode: 'RC-VIP-5512',
-      partner: '김복선 치유사',
-      condition: '3점 (보통)',
-      lastCheckin: '어제 19:40',
-      compliance: '67%',
-      careboxClaimed: false,
-      checkins: [
-        { date: '2026-09-01', condition: 3, sleep: 4, mind: 3, discomfort: 3, memo: '가을 케어박스 신청 완료했습니다.', submittedAt: '19:40' }
-      ],
-      messages: []
-    }
-  ];
-
-  function getAdminInvites() {
-    try {
-      const saved = localStorage.getItem(ADMIN_INVITES_STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
-    } catch(e) {}
-    return [
-      { code: 'RC-2026-VIP', target: '공식 마스터 초대권', partner: '김복선 치유사', status: '무제한 활성' },
-      { code: 'RC-VIP-8432', target: '이서준 회원 초대', partner: '김복선 치유사', status: '사용 완료' },
-      { code: 'RC-VIP-5512', target: '박지현 회원 초대', partner: '김복선 치유사', status: '사용 완료' }
-    ];
-  }
-
-  function saveAdminInvites(invites) {
-    localStorage.setItem(ADMIN_INVITES_STORAGE_KEY, JSON.stringify(invites));
-  }
 
   document.getElementById('btnNavAdmin')?.addEventListener('click', () => {
     if (isAdminAuthenticated) {

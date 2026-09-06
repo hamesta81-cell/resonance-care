@@ -1430,11 +1430,26 @@
     const resRoutine = document.getElementById('resGridVerification');
     const sajuBars = document.getElementById('resSajuBars');
     const timeEl = document.getElementById('reportGeneratedTime');
+    const scoreTextEl = document.getElementById('resStagnationScoreText');
+    const progressBarEl = document.getElementById('resStagnationProgressBar');
+    const descEl = document.getElementById('resStagnationDesc');
 
     if (resFact) resFact.textContent = diag.gridFact;
     if (resReport) resReport.textContent = diag.gridClientReport;
     if (resHealer) resHealer.textContent = diag.gridHealerImpression;
     if (resRoutine) resRoutine.textContent = diag.gridVerification;
+
+    // Update Stagnation Risk Gauge
+    if (scoreTextEl && diag.risk) {
+      scoreTextEl.textContent = `${diag.risk.score}점 (${diag.risk.levelText})`;
+      scoreTextEl.style.color = diag.risk.levelColor;
+    }
+    if (progressBarEl && diag.risk) {
+      progressBarEl.style.width = `${diag.risk.score}%`;
+    }
+    if (descEl && diag.risk) {
+      descEl.textContent = diag.risk.levelDesc;
+    }
 
     if (timeEl) {
       const now = new Date();
@@ -1456,7 +1471,7 @@
       resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    showToast('김복선 치유사 4-Grid 종합 진단 리포트가 성공적으로 발급되었습니다!', 'success');
+    showToast(`기혈 막힘 정밀 진단 완료! (위험도: ${diag.risk ? diag.risk.score : 75}점)`, 'success');
   });
 
   document.getElementById('btnOpenSupabaseModal')?.addEventListener('click', () => {

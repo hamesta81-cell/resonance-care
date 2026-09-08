@@ -3,38 +3,7 @@
 
 let globalServerState = {
   users: {},
-  communityPosts: [
-    {
-      id: 'post_1',
-      author: '김복선 치유사',
-      isOfficial: true,
-      category: 'notice',
-      content: '🍂 [공식 웰니스 공지] 9월 환절기, 따뜻한 온수 섭취와 저녁 4-7-8 이완 호흡으로 자율신경 균형을 지켜보세요.',
-      time: '오늘 09:00',
-      likes: 12,
-      isLiked: false
-    },
-    {
-      id: 'post_2',
-      author: '이서준 님 (VIP)',
-      isOfficial: false,
-      category: 'group',
-      content: '4주 수면개선 소그룹 3일차입니다! 김복선 치유사님이 추천해주신 당귀 침출차 마시고 잤더니 뒤척임 없이 7시간 푹 잤네요.',
-      time: '오늘 08:20',
-      likes: 8,
-      isLiked: false
-    },
-    {
-      id: 'post_3',
-      author: '박지현 님 (VIP)',
-      isOfficial: false,
-      category: 'review',
-      content: '가을 케어박스 오늘 도착했습니다! 유기농 침출차 향이 너무 은은하고 릴랙스 밤 바르니 목 뻐근함이 한결 덜합니다.',
-      time: '어제 19:40',
-      likes: 15,
-      isLiked: false
-    }
-  ]
+  communityPosts: []
 };
 
 export default function handler(req, res) {

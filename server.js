@@ -7,98 +7,17 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 
 // Initial Default State
 const defaultState = {
-  currentRole: 'member',
-  memberProfile: {
-    id: 'mem-1',
-    name: '김회원',
-    age: 38,
-    grade: 'VIP',
-    assignedPartner: '김서연 파트너',
-    membershipValidUntil: '2026.11.01',
-    consent: {
-      terms: true,
-      sensitiveHealth: true,
-      publicTestimonial: true
-    },
-    baselineInterview: {
-      sleepPattern: '하루 6시간 내외 / 취침 자정 전후',
-      discomfortAreas: ['목/어깨', '허리/골반'],
-      goal: '아침 기상 시 피로감 완화 및 만성 어깨 결림 개선'
-    }
-  },
-  checkins: [
-    {
-      id: 'chk-1',
-      date: '2026-08-30',
-      condition: 4,
-      sleep: 4,
-      mind: 4,
-      discomfort: 2,
-      memo: '가벼운 조깅 후 취침하여 아침에 개운했습니다.',
-      partnerChecked: true,
-      checkedAt: '2026.08.30 11:20',
-      partnerComment: '규칙적인 가벼운 유산소가 수면에 큰 도움이 되고 있네요.'
-    },
-    {
-      id: 'chk-2',
-      date: '2026-08-31',
-      condition: 3,
-      sleep: 2,
-      mind: 3,
-      discomfort: 5,
-      memo: '야근으로 늦게 자고 목 뒤와 승모근이 많이 뭉쳤습니다.',
-      partnerChecked: true,
-      checkedAt: '2026.08.31 10:15',
-      partnerComment: '오늘 저녁 세션에서 목과 상체 이완 호흡을 집중 진행하겠습니다.'
-    }
-  ],
+  currentRole: 'guest',
+  memberProfile: null,
+  checkins: [],
   todayCheckedIn: false,
   todayCheckinData: null,
-  careNotes: [
-    {
-      id: 'note-1',
-      memberId: 'mem-1',
-      memberName: '김회원',
-      sessionTitle: '2026.08.31 저녁 상체 이완 세션',
-      date: '2026.08.31 20:50',
-      content: '세션 초반 승모근 긴장이 높았으나 호흡 3세트 후 어깨 가동범위 회복됨. 세션 만족도 높음.',
-      nextFocus: '취침 전 5분 이완 루틴 유지',
-      partnerName: '김서연 파트너'
-    }
-  ],
-  followups: [
-    {
-      id: 'fl-1',
-      memberId: 'mem-1',
-      memberName: '김회원',
-      reason: '야근 후 승모근 통증 호소에 따른 세션 후 안부 확인',
-      dueDate: '2026.09.02',
-      status: 'pending',
-      partnerName: '김서연 파트너'
-    }
-  ],
-  partnerMembers: [
-    { id: 'mem-1', name: '김회원', grade: 'VIP', todayStatus: '미작성', condition: 3, sleep: 2, discomfort: 5, priority: 'uncheck', lastMemo: '야근으로 목 뒤 뭉침' },
-    { id: 'mem-2', name: '이영희', grade: 'Standard', todayStatus: '작성완료', condition: 2, sleep: 1, discomfort: 7, priority: 'urgent', lastMemo: '3일째 불면 지속, 두통' },
-    { id: 'mem-3', name: '박철수', grade: 'VIP', todayStatus: '작성완료', condition: 5, sleep: 5, discomfort: 1, priority: 'normal', lastMemo: '아침 컨디션 매우 상쾌함' }
-  ],
-  testimonials: [
-    {
-      id: 't-1',
-      authorName: '김*원 님',
-      area: '수면의 질 & 피로감 개선',
-      body: '전담 파트너가 내 컨디션을 매일 기억하고 맞춰주니 3개월 만에 아침 피로가 확연히 줄었습니다.',
-      date: '2026.08.20',
-      approved: true,
-      publicAgreed: true
-    }
-  ],
-  messages: [
-    { sender: 'partner', text: '김회원님, 어제 수면 점수가 조금 낮으셨네요. 오늘 저녁 세션에서는 목과 어깨 긴장 완화에 집중해볼게요!', time: '오전 10:15' }
-  ],
-  auditLogs: [
-    { timestamp: '2026.09.01 14:20:11', actor: '김서연 (CP-001)', role: 'Care Partner', target: '김회원 (mem-1)', action: '건강 타임라인 및 상태 체크 열람', ip: '192.168.1.45', reason: '일일 라운딩 업무' }
-  ]
+  careNotes: [],
+  followups: [],
+  partnerMembers: [],
+  testimonials: [],
+  messages: [],
+  auditLogs: []
 };
 
 // Helper: Read & Write Data Store

@@ -203,7 +203,7 @@
           <div class="user-greeting-box">
             <span class="status-dot online"></span>
             <div>
-              <h2 id="mbGreetingName">김회원 님</h2>
+              <h2 id="mbGreetingName">회원 님</h2>
               <small id="mbGreetingPartner">전담 케어: 김복선 치유사 배정됨</small>
             </div>
           </div>
@@ -304,7 +304,7 @@
                 <h4><i class="fa-solid fa-list-check text-success"></i> 7일 개인 케어 플랜 (MB-13)</h4>
                 <small class="text-muted">김복선 치유사와 함께하는 일일 맞춤 실천 태스크</small>
               </div>
-              <span class="plan-progress-pill" id="lblPlanProgressText">2 / 3 실천 완료 (67%)</span>
+              <span class="plan-progress-pill" id="lblPlanProgressText">0 / 3 실천 완료 (0%)</span>
             </div>
             <div class="plan-task-list" id="planTaskListContainer">
               <!-- Task Items generated dynamically -->
@@ -903,7 +903,7 @@
             <div class="kpi-icon text-primary"><i class="fa-solid fa-users"></i></div>
             <div class="kpi-info">
               <small>총 등록 회원</small>
-              <strong id="kpiTotalMembers">3명</strong>
+              <strong id="kpiTotalMembers">0명</strong>
             </div>
           </div>
           <div class="kpi-card" style="border:1px solid #F59E0B; background:#FFFBEB;">
@@ -917,14 +917,14 @@
             <div class="kpi-icon text-success"><i class="fa-solid fa-heart-pulse"></i></div>
             <div class="kpi-info">
               <small>오늘 상태 체크 완료</small>
-              <strong id="kpiTodayCheckins">2명 (67%)</strong>
+              <strong id="kpiTodayCheckins">0명 (0%)</strong>
             </div>
           </div>
           <div class="kpi-card">
             <div class="kpi-icon text-gold"><i class="fa-solid fa-list-check"></i></div>
             <div class="kpi-info">
               <small>7일 케어 플랜 실천</small>
-              <strong id="kpiPlanCompliance">82%</strong>
+              <strong id="kpiPlanCompliance">0%</strong>
             </div>
           </div>
         </div>
@@ -1020,13 +1020,7 @@
                   </tr>
                 </thead>
                 <tbody id="adminInvitesTableBody">
-                  <tr>
-                    <td><code>RC-2026-VIP</code></td>
-                    <td>공식 마스터 초대권</td>
-                    <td>김복선 치유사</td>
-                    <td><span class="badge-active">무제한 활성</span></td>
-                    <td><button class="btn btn-outline btn-xs" onclick="navigator.clipboard.writeText('RC-2026-VIP'); alert('RC-2026-VIP 코드가 복사되었습니다.');"><i class="fa-solid fa-copy"></i> 복사</button></td>
-                  </tr>
+                  <!-- Generated Dynamically -->
                 </tbody>
               </table>
             </div>
@@ -1517,6 +1511,6 @@
 
   <script src="tcm_database.js?v=20260903_tcm"></script>
   <script src="saju_healer_engine.js?v=20260904_healer"></script>
-  <script src="app.js?v=20260906_open_approval"></script>
+  <script src="app.js?v=20260908_clean_nomock"></script>
 </body>
 </html>

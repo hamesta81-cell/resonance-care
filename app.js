@@ -104,70 +104,26 @@
 
   const ADMIN_MEMBERS_STORAGE_KEY = 'resonance_admin_managed_members_v2';
 
-  // Sample Baseline Members for Demo & Live Management
-  const INITIAL_MANAGED_MEMBERS = [
-    {
-      id: 'user_김회원_5678',
-      name: '김회원',
-      phone: '010-1234-5678',
-      inviteCode: 'RC-2026-VIP',
-      grade: 'VIP',
-      partner: '김복선 치유사',
-      condition: '4점 (가뿐함)',
-      lastCheckin: '오늘 09:30',
-      compliance: '85%',
-      careboxClaimed: true,
-      checkins: [
-        { date: '2026-09-02', condition: 4, sleep: 4, mind: 4, discomfort: 2, memo: '아침에 미온수를 마시니 몸이 가뿐합니다.', submittedAt: '09:30' },
-        { date: '2026-09-01', condition: 3, sleep: 3, mind: 3, discomfort: 4, memo: '목 어깨가 조금 뻐근했습니다.', submittedAt: '21:10' }
-      ],
-      messages: [
-        { sender: 'member', text: '치유사님, 오늘 목 어깨 스트레칭 호흡법 따라하니 한결 시원하네요!', time: '10:15' },
-        { sender: 'partner', text: '김회원님 참 잘하셨습니다! 오늘 저녁 20시 세션에서도 이완 호흡 함께하겠습니다.', time: '10:20' }
-      ]
-    },
-    {
-      id: 'user_이서준_8888',
-      name: '이서준',
-      phone: '010-9999-8888',
-      inviteCode: 'RC-VIP-8432',
-      grade: 'VIP',
-      partner: '김복선 치유사',
-      condition: '5점 (매우 상쾌)',
-      lastCheckin: '오늘 08:20',
-      compliance: '100%',
-      careboxClaimed: true,
-      checkins: [
-        { date: '2026-09-02', condition: 5, sleep: 5, mind: 5, discomfort: 1, memo: '당귀 침출차 마시고 7시간 숙면 취했습니다.', submittedAt: '08:20' }
-      ],
-      messages: [
-        { sender: 'partner', text: '이서준님, 수면 개선 목표가 순조롭게 달성되고 있습니다. 훌륭합니다.', time: '08:30' }
-      ]
-    },
-    {
-      id: 'user_박지현_3333',
-      name: '박지현',
-      phone: '010-7777-3333',
-      inviteCode: '일반 가입',
-      grade: '준회원',
-      partner: '승인 대기',
-      condition: '3점 (보통)',
-      lastCheckin: '어제 19:40',
-      compliance: '67%',
-      careboxClaimed: false,
-      checkins: [
-        { date: '2026-09-01', condition: 3, sleep: 4, mind: 3, discomfort: 3, memo: '가을 케어박스 신청 완료했습니다.', submittedAt: '19:40' }
-      ],
-      messages: []
-    }
-  ];
+  // Baseline Members: Clean state (No mock data)
+  const INITIAL_MANAGED_MEMBERS = [];
 
   function getManagedMembers() {
     try {
       const saved = localStorage.getItem(ADMIN_MEMBERS_STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Automatically purge any previous mock/dummy members
+        const cleaned = parsed.filter(m => 
+          !['user_김회원_5678', 'user_이서준_8888', 'user_박지현_3333'].includes(m.id) &&
+          m.name !== '김회원' && m.name !== '이서준' && m.name !== '박지현'
+        );
+        if (cleaned.length !== parsed.length) {
+          localStorage.setItem(ADMIN_MEMBERS_STORAGE_KEY, JSON.stringify(cleaned));
+        }
+        return cleaned;
+      }
     } catch(e) {}
-    return [...INITIAL_MANAGED_MEMBERS];
+    return [];
   }
 
   function saveManagedMembers(members) {
@@ -177,13 +133,19 @@
   function getAdminInvites() {
     try {
       const saved = localStorage.getItem(ADMIN_INVITES_STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Filter out legacy dummy invite targets
+        const cleaned = parsed.filter(inv => 
+          inv.target !== '이서준 회원 초대' && 
+          inv.target !== '박지현 회원 초대' &&
+          inv.code !== 'RC-VIP-8432' && 
+          inv.code !== 'RC-VIP-5512'
+        );
+        return cleaned;
+      }
     } catch(e) {}
-    return [
-      { code: 'RC-2026-VIP', target: '공식 마스터 초대권', partner: '김복선 치유사', status: '무제한 활성' },
-      { code: 'RC-VIP-8432', target: '이서준 회원 초대', partner: '김복선 치유사', status: '사용 완료 (이서준)' },
-      { code: 'RC-VIP-5512', target: '박지현 회원 초대', partner: '김복선 치유사', status: '발급 활성' }
-    ];
+    return [];
   }
 
   function saveAdminInvites(invites) {
@@ -396,39 +358,8 @@
     }
   ];
 
-  // 2. Default Initial Community Posts (CM-01)
-  const INITIAL_COMMUNITY_POSTS = [
-    {
-      id: 'post_1',
-      author: '김복선 치유사',
-      isOfficial: true,
-      category: 'notice',
-      content: '🍂 [공식 웰니스 공지] 9월 환절기, 따뜻한 온수 섭취와 저녁 4-7-8 이완 호흡으로 자율신경 균형을 지켜보세요.',
-      time: '오늘 09:00',
-      likes: 12,
-      isLiked: false
-    },
-    {
-      id: 'post_2',
-      author: '이서준 님 (VIP)',
-      isOfficial: false,
-      category: 'group',
-      content: '4주 수면개선 소그룹 3일차입니다! 김복선 치유사님이 추천해주신 당귀 침출차 마시고 잤더니 뒤척임 없이 7시간 푹 잤네요.',
-      time: '오늘 08:20',
-      likes: 8,
-      isLiked: false
-    },
-    {
-      id: 'post_3',
-      author: '박지현 님 (VIP)',
-      isOfficial: false,
-      category: 'review',
-      content: '가을 케어박스 오늘 도착했습니다! 유기농 침출차 향이 너무 은은하고 릴랙스 밤 바르니 목 뻐근함이 한결 덜합니다.',
-      time: '어제 19:40',
-      likes: 15,
-      isLiked: false
-    }
-  ];
+  // 2. Default Initial Community Posts (CM-01) - Clean State
+  const INITIAL_COMMUNITY_POSTS = [];
 
   // State Management
   let currentUser = loadAuth();
@@ -457,18 +388,25 @@
   function loadUserData(userId) {
     try {
       const saved = localStorage.getItem(DATA_KEY_PREFIX + userId);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.communityPosts) {
+          // Purge legacy mock posts
+          parsed.communityPosts = parsed.communityPosts.filter(p => !['post_1', 'post_2', 'post_3'].includes(p.id));
+        }
+        return parsed;
+      }
     } catch(e) {}
 
-    // Clean initial state for V2 user
+    // Clean initial state for genuine user
     return {
       userId,
       checkins: [],
       todayCheckedIn: false,
       todayCheckinData: null,
       carePlanTasks: [
-        { id: 'task_1', title: '아침 공복 미온수 300ml 섭취', desc: '밤새 끈적해진 혈액 순환 및 장 활성화', completed: true },
-        { id: 'task_2', title: '오후 3시 목/어깨 이완 호흡 5분', desc: '긴장된 상체 근육 스트레칭 및 심호흡', completed: true },
+        { id: 'task_1', title: '아침 공복 미온수 300ml 섭취', desc: '밤새 끈적해진 혈액 순환 및 장 활성화', completed: false },
+        { id: 'task_2', title: '오후 3시 목/어깨 이완 호흡 5분', desc: '긴장된 상체 근육 스트레칭 및 심호흡', completed: false },
         { id: 'task_3', title: '취침 1시간 전 스마트폰 끄기', desc: '멜라토닌 분비 촉진 및 깊은 수면 유도', completed: false }
       ],
       wallet: {
@@ -477,7 +415,7 @@
         careboxAddress: '',
         invitePassCount: 2
       },
-      communityPosts: [...INITIAL_COMMUNITY_POSTS],
+      communityPosts: [],
       messages: [
         {
           sender: 'partner',
@@ -1796,82 +1734,149 @@
   function renderAdminDashboard() {
     const members = getManagedMembers();
     const pendingMembers = members.filter(m => m.grade === '준회원');
+    const checkedInMembers = members.filter(m => m.checkins && m.checkins.length > 0 && m.lastCheckin && m.lastCheckin.includes('오늘'));
 
-    // 1. KPI Stats
+    // 1. KPI Stats Dynamic Calculation (Clean, 0 mock)
     const totalMembersEl = document.getElementById('kpiTotalMembers');
     if (totalMembersEl) totalMembersEl.textContent = `${members.length}명`;
 
     const pendingCountEl = document.getElementById('kpiPendingApprovalCount');
     if (pendingCountEl) pendingCountEl.textContent = `${pendingMembers.length}명`;
 
+    const todayCheckinEl = document.getElementById('kpiTodayCheckins');
+    if (todayCheckinEl) {
+      const checkRatio = members.length > 0 ? Math.round((checkedInMembers.length / members.length) * 100) : 0;
+      todayCheckinEl.textContent = `${checkedInMembers.length}명 (${checkRatio}%)`;
+    }
+
+    const complianceEl = document.getElementById('kpiPlanCompliance');
+    if (complianceEl) {
+      if (members.length === 0) {
+        complianceEl.textContent = '0%';
+      } else {
+        const totalCompliance = members.reduce((sum, m) => sum + (parseInt(m.compliance, 10) || 0), 0);
+        complianceEl.textContent = `${Math.round(totalCompliance / members.length)}%`;
+      }
+    }
+
     // 2. Members Table
     const tbody = document.getElementById('adminMembersTableBody');
     if (tbody) {
-      tbody.innerHTML = members.map(m => {
-        const isApproved = (m.grade === 'VIP' || m.grade === '정회원');
-        const gradeBadge = isApproved
-          ? `<span class="badge-gold"><i class="fa-solid fa-crown"></i> VIP 정회원</span>`
-          : `<span class="badge-active" style="background:#FEF3C7; color:#B45309; border:1px solid #F59E0B;"><i class="fa-solid fa-hourglass-half"></i> 준회원</span>`;
-
-        const actionBtns = isApproved
-          ? `
-            <button class="btn btn-outline btn-xs" onclick="window.viewAdminMember('${m.id}')" title="차트 상세">
-              <i class="fa-solid fa-magnifying-glass-chart"></i> 차트
-            </button>
-            <button class="btn btn-outline btn-xs text-danger" onclick="window.revokeMember('${m.id}')" title="준회원으로 전환">
-              <i class="fa-solid fa-user-xmark"></i>
-            </button>
-          `
-          : `
-            <button class="btn btn-primary btn-xs" onclick="window.approveMember('${m.id}')">
-              <i class="fa-solid fa-user-check"></i> 정회원 승인
-            </button>
-          `;
-
-        return `
+      if (members.length === 0) {
+        tbody.innerHTML = `
           <tr>
-            <td><strong>${m.name}</strong></td>
-            <td>${m.phone}</td>
-            <td>${gradeBadge}</td>
-            <td><i class="fa-solid fa-user-doctor text-primary"></i> ${m.partner}</td>
-            <td><span class="${isApproved ? 'badge-active' : 'tag-badge'}">${m.condition}</span></td>
-            <td>${actionBtns}</td>
+            <td colspan="6" style="text-align:center; padding:36px; color:#94A3B8;">
+              <div style="font-size:24px; margin-bottom:8px;"><i class="fa-solid fa-users-slash"></i></div>
+              <p style="margin:0; font-size:14px; font-weight:600;">등록된 회원이 없습니다.</p>
+              <small style="font-size:12px; opacity:0.8;">신규 회원이 가입하면 실시간으로 이곳에 등록되며 정회원 승인이 가능합니다.</small>
+            </td>
           </tr>
         `;
-      }).join('');
+      } else {
+        tbody.innerHTML = members.map(m => {
+          const isApproved = (m.grade === 'VIP' || m.grade === '정회원');
+          const gradeBadge = isApproved
+            ? `<span class="badge-gold"><i class="fa-solid fa-crown"></i> VIP 정회원</span>`
+            : `<span class="badge-active" style="background:#FEF3C7; color:#B45309; border:1px solid #F59E0B;"><i class="fa-solid fa-hourglass-half"></i> 준회원</span>`;
+
+          const actionBtns = isApproved
+            ? `
+              <button class="btn btn-outline btn-xs" onclick="window.viewAdminMember('${m.id}')" title="차트 상세">
+                <i class="fa-solid fa-magnifying-glass-chart"></i> 차트
+              </button>
+              <button class="btn btn-outline btn-xs text-danger" onclick="window.revokeMember('${m.id}')" title="준회원으로 전환">
+                <i class="fa-solid fa-user-xmark"></i>
+              </button>
+            `
+            : `
+              <button class="btn btn-primary btn-xs" onclick="window.approveMember('${m.id}')">
+                <i class="fa-solid fa-user-check"></i> 정회원 승인
+              </button>
+            `;
+
+          return `
+            <tr>
+              <td><strong>${m.name}</strong></td>
+              <td>${m.phone}</td>
+              <td>${gradeBadge}</td>
+              <td><i class="fa-solid fa-user-doctor text-primary"></i> ${m.partner}</td>
+              <td><span class="${isApproved ? 'badge-active' : 'tag-badge'}">${m.condition}</span></td>
+              <td>${actionBtns}</td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
 
     // 3. Rounding Queue
     const queueList = document.getElementById('adminRoundingQueueList');
     if (queueList) {
-      queueList.innerHTML = members.map(m => {
-        const latestCheck = m.checkins && m.checkins[0];
-        if (!latestCheck) return '';
-        return `
-          <div class="rounding-queue-card">
-            <div class="rounding-header-flex">
-              <div>
-                <strong>${m.name} 님</strong> · <small class="text-muted">${latestCheck.date} ${latestCheck.submittedAt}</small>
-                <span class="v2-pill ml-2">컨디션 ${latestCheck.condition}점</span>
-              </div>
-              <span class="badge-gold"><i class="fa-solid fa-bed"></i> 수면 ${latestCheck.sleep}점 / 마음 ${latestCheck.mind}점</span>
-            </div>
-            <div class="rounding-memo-quote">
-              <i class="fa-solid fa-quote-left mr-1"></i> "${latestCheck.memo || '특이사항 없음'}"
-            </div>
-            <div class="rounding-reply-box">
-              <input type="text" class="form-input text-xs" id="reply_input_${m.id}" placeholder="김복선 치유사 피드백 입력 (예: 따뜻한 차 음용과 이완 호흡 권장)...">
-              <button class="btn btn-primary btn-xs" onclick="window.sendHealerReply('${m.id}')">
-                <i class="fa-solid fa-paper-plane"></i> 피드백 전송
-              </button>
-            </div>
+      const activeQueue = members.filter(m => m.checkins && m.checkins.length > 0);
+      if (activeQueue.length === 0) {
+        queueList.innerHTML = `
+          <div class="empty-state-box" style="text-align:center; padding:36px; background:#F8FAFC; border:1px dashed #CBD5E1; border-radius:12px; color:#94A3B8;">
+            <i class="fa-solid fa-clipboard-list" style="font-size:28px; margin-bottom:10px; display:block; color:#94A3B8;"></i>
+            <h4 style="font-size:15px; font-weight:700; color:#64748B; margin-bottom:4px;">오늘 제출된 상태 체크 기록이 없습니다.</h4>
+            <p style="font-size:12px; margin:0;">회원이 1분 데일리 상태 체크를 작성하면 실시간 라운딩 큐에 등록됩니다.</p>
           </div>
         `;
-      }).join('');
+      } else {
+        queueList.innerHTML = activeQueue.map(m => {
+          const latestCheck = m.checkins && m.checkins[0];
+          if (!latestCheck) return '';
+          return `
+            <div class="rounding-queue-card">
+              <div class="rounding-header-flex">
+                <div>
+                  <strong>${m.name} 님</strong> · <small class="text-muted">${latestCheck.date} ${latestCheck.submittedAt}</small>
+                  <span class="v2-pill ml-2">컨디션 ${latestCheck.condition}점</span>
+                </div>
+                <span class="badge-gold"><i class="fa-solid fa-bed"></i> 수면 ${latestCheck.sleep}점 / 마음 ${latestCheck.mind}점</span>
+              </div>
+              <div class="rounding-memo-quote">
+                <i class="fa-solid fa-quote-left mr-1"></i> "${latestCheck.memo || '특이사항 없음'}"
+              </div>
+              <div class="rounding-reply-box">
+                <input type="text" class="form-input text-xs" id="reply_input_${m.id}" placeholder="김복선 치유사 피드백 입력 (예: 따뜻한 차 음용과 이완 호흡 권장)...">
+                <button class="btn btn-primary btn-xs" onclick="window.sendHealerReply('${m.id}')">
+                  <i class="fa-solid fa-paper-plane"></i> 피드백 전송
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
     }
 
     // 4. Invites List
     renderAdminInvitesTable();
+  }
+
+  function renderAdminInvitesTable() {
+    const tbody = document.getElementById('adminInvitesTableBody');
+    if (!tbody) return;
+    const invites = getAdminInvites();
+    if (invites.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align:center; padding:32px; color:#94A3B8;">
+            <i class="fa-solid fa-ticket-simple" style="font-size:24px; margin-bottom:8px; display:block; color:#CBD5E1;"></i>
+            <p style="margin:0; font-size:13px; font-weight:600;">발급된 VIP 초대 코드가 없습니다.</p>
+            <small style="font-size:11px; opacity:0.8;">상단에서 발급 대상자를 입력하고 [새 초대 코드 발급] 버튼을 눌러 생성하세요.</small>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+    tbody.innerHTML = invites.map(inv => `
+      <tr>
+        <td><code>${inv.code}</code></td>
+        <td>${inv.target || 'VIP 회원'}</td>
+        <td>${inv.partner || '김복선 치유사'}</td>
+        <td><span class="${inv.status && inv.status.includes('완료') ? 'badge-active' : 'badge-gold'}">${inv.status || '발급 활성'}</span></td>
+        <td><button class="btn btn-outline btn-xs" onclick="navigator.clipboard.writeText('${inv.code}'); alert('${inv.code} 코드가 복사되었습니다.');"><i class="fa-solid fa-copy"></i> 복사</button></td>
+      </tr>
+    `).join('');
   }
 
   // Member Approval & Revocation Global Functions

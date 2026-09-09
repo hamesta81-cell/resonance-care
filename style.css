@@ -2462,6 +2462,211 @@ body.luxury-body {
 }
 
 /* ========================================================
+   HEALER ORACLE & WORDS BOARD (치유사 전언 게시판 스타일)
+   ======================================================== */
+.healer-words-header-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 24px;
+  background: #FFFFFF;
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.healer-words-banner-img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
+.healer-words-header-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 28px 32px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.85) 100%);
+  color: #FFFFFF;
+}
+
+.healer-words-header-overlay h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 6px 0 4px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.healer-words-header-overlay p {
+  font-size: 13px;
+  color: #E2E8F0;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.featured-oracle-box {
+  background: #FFFFFF;
+  border: 1.5px solid rgba(217, 119, 6, 0.35);
+  border-radius: var(--radius-md);
+  padding: 26px 30px;
+  margin-bottom: 26px;
+  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.08);
+  position: relative;
+  background-image: radial-gradient(circle at top right, rgba(254, 243, 199, 0.45) 0%, transparent 60%);
+}
+
+.featured-oracle-badge-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.featured-oracle-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #78350F;
+  margin: 6px 0 12px;
+  line-height: 1.4;
+}
+
+.featured-oracle-text {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #334155;
+  margin-bottom: 16px;
+  white-space: pre-line;
+  background: #FFFBEB;
+  border-left: 3px solid #D97706;
+  padding: 14px 18px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.oracle-rx-box {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.oracle-actions-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px solid #F1F5F9;
+}
+
+.healer-words-filter-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.words-filter-btn {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.words-filter-btn.active, .words-filter-btn:hover {
+  background: #FEF3C7;
+  border-color: #F59E0B;
+  color: #92400E;
+}
+
+.healer-words-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.healer-word-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-md);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: var(--transition-fast);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+  position: relative;
+}
+
+.healer-word-card:hover {
+  transform: translateY(-3px);
+  border-color: #F59E0B;
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.12);
+}
+
+.healer-word-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.healer-word-card h4 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+
+.healer-word-card p {
+  font-size: 13px;
+  color: #64748B;
+  line-height: 1.6;
+  margin: 0 0 14px;
+}
+
+.healer-word-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #F1F5F9;
+  font-size: 12px;
+  color: #94A3B8;
+}
+
+.word-comments-section {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #E2E8F0;
+}
+
+.word-comment-item {
+  background: #F8FAFC;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.word-comment-author {
+  font-weight: 700;
+  color: #059669;
+  margin-right: 6px;
+}
+
+/* ========================================================
    MOBILE RESPONSIVE MEDIA QUERIES (< 768px)
    ======================================================== */
 @media (max-width: 768px) {
@@ -2483,20 +2688,21 @@ body.luxury-body {
   }
   .membership-status-pill { width: 100%; justify-content: space-between; }
 
-  /* V2 모바일 5개 탭 바 */
+  /* V2 모바일 6개 탭 바 */
   .v2-tab-nav {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
-    padding-bottom: 6px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding-bottom: 8px;
   }
   .m-tab-btn {
-    padding: 9px 4px;
+    padding: 10px 6px;
     font-size: 11px;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
+    text-align: center;
   }
-  .m-tab-btn i { font-size: 13px; }
+  .m-tab-btn i { font-size: 14px; }
 
   .wallet-perks-row { grid-template-columns: 1fr; gap: 8px; }
   .wallet-action-btns { flex-direction: column; }

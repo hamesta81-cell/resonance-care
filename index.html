@@ -120,7 +120,7 @@
       <div class="body-mind-reset-showcase mt-5 mb-5">
         <div class="reset-showcase-grid">
           <div class="reset-showcase-visual">
-            <img src="resonance_renewal_ref.png" alt="Resonance Body & Mind Reset Sanctuary" class="reset-visual-img">
+            <img src="wellness_sanctuary_real.jpg?v=20260909_real" alt="Resonance Body & Mind Reset Sanctuary" class="reset-visual-img">
             <div class="reset-visual-overlay">
               <span class="badge-gold"><i class="fa-solid fa-spa"></i> BODY & MIND RESET</span>
               <h4>자연과 파동이 주는 온전한 휴식</h4>
@@ -231,9 +231,10 @@
           </div>
         </div>
 
-        <!-- 5 MAIN V2 TABS -->
+        <!-- 6 MAIN V2 TABS -->
         <div class="member-tab-nav v2-tab-nav">
           <button class="m-tab-btn active" data-target="m-tab-today"><i class="fa-solid fa-calendar-day"></i> 오늘</button>
+          <button class="m-tab-btn" data-target="m-tab-healer-words"><i class="fa-solid fa-feather-pointed text-gold"></i> 치유사 전언</button>
           <button class="m-tab-btn" data-target="m-tab-timeline"><i class="fa-solid fa-chart-pie"></i> 기록/리포트</button>
           <button class="m-tab-btn" data-target="m-tab-community"><i class="fa-solid fa-comments"></i> 커뮤니티</button>
           <button class="m-tab-btn" data-target="m-tab-knowledge"><i class="fa-solid fa-book-open"></i> 건강정보</button>
@@ -338,7 +339,49 @@
         </div>
 
         <!-- ====================================================
-             TAB 2: 기록/리포트 (MB-07 타임라인 + MB-08 주간/월간 리포트)
+             TAB: 김복선 치유사 전언 게시판 (Words of Resonance)
+             ==================================================== -->
+        <div id="m-tab-healer-words" class="m-tab-content">
+          <!-- Real Photography Header Card -->
+          <div class="healer-words-header-card">
+            <img src="healer_message_real.jpg?v=20260909_real" alt="김복선 치유사의 힐링 전언" class="healer-words-banner-img">
+            <div class="healer-words-header-overlay">
+              <span class="badge-gold"><i class="fa-solid fa-feather-pointed"></i> WORDS OF RESONANCE</span>
+              <h2>김복선 치유사 힐링 전언 게시판</h2>
+              <p>몸의 막힌 기혈을 열고 마음의 매듭을 푸는 직관의 말씀과 계절 웰니스 일일 치유 조언</p>
+            </div>
+          </div>
+
+          <!-- Featured Oracle Box (오늘의 핵심 치유 전언) -->
+          <div class="featured-oracle-box" id="featuredOracleContainer">
+            <!-- Rendered Dynamically by app.js -->
+          </div>
+
+          <!-- Words Archive Navigation & Filter -->
+          <div class="tab-head-title mt-4">
+            <div class="card-header-flex">
+              <div>
+                <h4><i class="fa-solid fa-scroll text-gold"></i> 치유사 전언 아카이브</h4>
+                <p class="text-muted text-xs mt-1">계절의 흐름과 신체 바이오리듬에 맞추어 전달된 역대 치유 서신 모아보기</p>
+              </div>
+              <div class="healer-words-filter-nav">
+                <button class="words-filter-btn active" data-word-filter="all">전체 전언</button>
+                <button class="words-filter-btn" data-word-filter="season">절기 웰니스</button>
+                <button class="words-filter-btn" data-word-filter="qi">기혈 순환</button>
+                <button class="words-filter-btn" data-word-filter="mind">마음 챙김</button>
+                <button class="words-filter-btn" data-word-filter="sleep">수면과 쉼</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Words Grid List -->
+          <div class="healer-words-grid mt-3" id="healerWordsListContainer">
+            <!-- Dynamic Healer Word Cards rendered by app.js -->
+          </div>
+        </div>
+
+        <!-- ====================================================
+             TAB 3: 기록/리포트 (MB-07 타임라인 + MB-08 주간/월간 리포트)
              ==================================================== -->
         <div id="m-tab-timeline" class="m-tab-content">
           <div class="tab-head-title">
@@ -932,6 +975,7 @@
         <!-- Admin Sub-Navigation Tabs -->
         <div class="admin-tab-nav">
           <button class="admin-tab-btn active" data-admin-tab="adm-members"><i class="fa-solid fa-users-gear"></i> 전체 회원 관리 & 승인 (AD-02)</button>
+          <button class="admin-tab-btn" data-admin-tab="adm-healer-words"><i class="fa-solid fa-feather-pointed text-gold"></i> 치유사 전언 발행 (AD-05)</button>
           <button class="admin-tab-btn" data-admin-tab="adm-rounding"><i class="fa-solid fa-stethoscope"></i> 김복선 치유사 라운딩 큐 (CP-01)</button>
           <button class="admin-tab-btn" data-admin-tab="adm-invites"><i class="fa-solid fa-ticket"></i> VIP 초대권 발급 (AD-03)</button>
           <button class="admin-tab-btn" data-admin-tab="adm-settings"><i class="fa-solid fa-sliders"></i> 공지 & 생중계 설정 (AD-04)</button>
@@ -1054,6 +1098,81 @@
                 <button class="btn btn-youtube btn-sm" id="btnAdminSaveYoutubeUrl"><i class="fa-solid fa-check"></i> 생중계 주소 즉시 반영</button>
               </div>
               <small class="text-muted mt-1 block">현재 연결 채널: Re;sonance2026 (@Resonance2026-e7c)</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. TAB: HEALER WORDS PUBLISHING (AD-05) -->
+        <div id="adm-healer-words" class="admin-tab-content">
+          <div class="admin-panel-card">
+            <div class="panel-header-flex">
+              <div>
+                <h3><i class="fa-solid fa-feather-pointed text-gold"></i> 김복선 치유사 전언 공식 발행기 (AD-05)</h3>
+                <small class="text-muted">전체 회원 및 정회원(VIP)에게 전달할 일일 치유 서신과 계절 웰니스 조언을 발행합니다.</small>
+              </div>
+            </div>
+
+            <form id="formAdminHealerWord" class="mt-3">
+              <div class="form-group mb-3">
+                <label>전언 제목</label>
+                <input type="text" class="form-input" id="inputAdminWordTitle" placeholder="예: 백로(白露)의 이슬처럼 맑은 호흡으로 몸의 중심을 세우세요" required>
+              </div>
+
+              <div class="form-row-flex mb-3">
+                <div class="form-group flex-1">
+                  <label>계절 / 기운 키워드</label>
+                  <input type="text" class="form-input" id="inputAdminWordKeyword" placeholder="예: 초가을 백로(白露) · 폐(肺)의 호흡" required>
+                </div>
+                <div class="form-group flex-1">
+                  <label>전언 카테고리</label>
+                  <select class="form-input" id="selectAdminWordCategory">
+                    <option value="season">절기 웰니스</option>
+                    <option value="qi">기혈 순환</option>
+                    <option value="mind">마음 챙김</option>
+                    <option value="sleep">수면과 쉼</option>
+                  </select>
+                </div>
+                <div class="form-group flex-1">
+                  <label>열람 권한</label>
+                  <select class="form-input" id="selectAdminWordTarget">
+                    <option value="all">전체 회원 공개</option>
+                    <option value="vip">VIP 정회원 전용</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group mb-3">
+                <label>오늘의 추천 힐링 처방 (약차 & 호흡)</label>
+                <input type="text" class="form-input" id="inputAdminWordRx" placeholder="예: 따뜻한 당귀 침출차 음용 + 4-7-8 이완 호흡 10회">
+              </div>
+
+              <div class="form-group mb-3">
+                <label>치유사 전언 본문 (따뜻한 문체로 작성)</label>
+                <textarea class="form-textarea" id="inputAdminWordContent" rows="4" placeholder="회원들의 몸과 마음의 매듭을 풀어주는 치유사의 직관과 위로의 말씀을 작성하세요." required></textarea>
+              </div>
+
+              <div class="text-right">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> 치유사 공식 전언 발행</button>
+              </div>
+            </form>
+
+            <h4 class="mt-4 mb-2"><i class="fa-solid fa-list-check"></i> 현재 발행된 치유사 전언 목록</h4>
+            <div class="admin-table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>발행일</th>
+                    <th>전언 제목</th>
+                    <th>키워드</th>
+                    <th>열람 권한</th>
+                    <th>회원 공감</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody id="adminHealerWordsTableBody">
+                  <!-- Generated Dynamically -->
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -1469,6 +1588,58 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-primary btn-sm" data-close-modal="modalAdminMemberDetail">확인 완료</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL: HEALER WORD DETAIL (치유사 전언 상세 및 감사 나눔) -->
+  <div class="app-modal-overlay" id="modalHealerWordDetail">
+    <div class="app-modal-dialog" style="max-width: 640px;">
+      <div class="modal-header">
+        <div>
+          <span class="badge-gold text-xs" id="hwModalCategory"><i class="fa-solid fa-feather-pointed"></i> 절기 웰니스</span>
+          <h3 id="hwModalTitle" class="mt-1">치유사 전언 제목</h3>
+          <p class="modal-sub" id="hwModalDate">발행일: 2026.09.09 · 김복선 치유사 직관 전언</p>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalHealerWordDetail"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="oracle-rx-box mb-3" id="hwModalRxBox">
+          <i class="fa-solid fa-mortar-pestle text-primary" style="font-size:20px;"></i>
+          <div>
+            <strong class="text-xs text-primary block">오늘의 추천 힐링 처방</strong>
+            <span class="text-sm font-bold text-dark" id="hwModalRxText">추천 처방 내용</span>
+          </div>
+        </div>
+
+        <div class="featured-oracle-text mb-4" id="hwModalContent" style="font-size:15px; line-height:1.8;">
+          전언 전문 본문
+        </div>
+
+        <div class="oracle-actions-flex mb-3">
+          <button type="button" class="btn btn-outline btn-sm" id="btnHwModalLike">
+            <i class="fa-solid fa-heart text-danger"></i> <span id="lblHwModalLikeCount">치유사님 감사합니다 12</span>
+          </button>
+          <span class="text-xs text-muted" id="hwModalKeyword">키워드: 백로(白露)</span>
+        </div>
+
+        <!-- Comments / Heartfelt notes from members -->
+        <div class="word-comments-section">
+          <h5 class="text-sm font-bold mb-2"><i class="fa-solid fa-comments text-primary"></i> 회원들의 감사 한마디</h5>
+          <div id="hwModalCommentsList" class="mb-3" style="max-height: 180px; overflow-y: auto;">
+            <!-- Dynamic comments -->
+          </div>
+          <form id="formHwAddComment" style="display:flex; gap:8px;">
+            <input type="text" class="form-input text-xs flex-1" id="inputHwCommentText" placeholder="치유사님의 전언에 따뜻한 감사의 마음을 남겨보세요..." required>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-paper-plane"></i> 남기기</button>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline btn-sm" data-close-modal="modalHealerWordDetail">닫기</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: ACUPOINT DETAIL (혈자리 상세 지압 가이드) -->
   <div class="app-modal-overlay" id="modalAcupointDetail">
     <div class="app-modal-dialog">
@@ -1511,6 +1682,6 @@
 
   <script src="tcm_database.js?v=20260903_tcm"></script>
   <script src="saju_healer_engine.js?v=20260904_healer"></script>
-  <script src="app.js?v=20260908_clean_nomock"></script>
+  <script src="app.js?v=20260909_healer_words"></script>
 </body>
 </html>
